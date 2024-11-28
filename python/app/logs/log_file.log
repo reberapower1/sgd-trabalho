@@ -1,0 +1,101 @@
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.01:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.18.0.3:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.01:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 617-436-378
+INFO:werkzeug: * Detected change in '/app/deijet-api.py', reloading
+INFO:werkzeug: * Restarting with stat
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.18.0.3:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 766-548-314
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.18.0.3:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 107-416-811
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.18.0.3:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 539-392-513
+INFO:werkzeug: * Detected change in '/app/deijet-api.py', reloading
+INFO:werkzeug: * Restarting with stat
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 539-392-513
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.18.0.3:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with stat
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 989-908-782

@@ -17,6 +17,8 @@ run pip install python-dotenv
 
 run pip install psycopg2-binary
 
+run pip install psycopg2
+
 copy . /app
 
 volume ["/app"]
