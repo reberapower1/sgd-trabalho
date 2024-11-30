@@ -76,7 +76,7 @@ def verify_password(db_hash, provided_hash):
 
 #ESTE É O DO CLIENTE
 @app.route('/sgdproj/register/client', methods = ['POST'])
-def register_user():
+def register_client():
     logger.info('POST /sgdproj/register/user');   
     payload = request.get_json()
    
@@ -129,9 +129,17 @@ def register_user():
 
 # REGISTAR O  Admin
 @app.route('/sgdproj/register/admin', methods = ['POST'])
-def register_user():
+def register_admin():
     logger.info('POST /sgdproj/register/admin');   
     payload = request.get_json()
+
+    # Verificar se o token existe no payload
+    if 'token' not in payload:
+        response = {
+            'status': StatusCodes['api_error'],
+            'message': 'Token não existe'
+        }
+        return jsonify(response)
    
     conn = db_connection()
     cur = conn.cursor()
@@ -142,64 +150,60 @@ def register_user():
 
     # Admin token
     admin_token = payload['token']
-    
+
     # Verify admin token
-    if(verify_admin_token(cur, admin_token)):
-        # Check payload keys
-        keysNeededAdmin = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email', 'funcao','criado_por']
-        for key in keysNeededAdmin:
-            if key not in payload :
-                response = {
-                    'status': StatusCodes ['api_error'],
-                    'message': f'{key} key not in admin payload' 
-                }
-            return jsonify(response)
-        
-        # Encrypt password
-        payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
-
-        statement = 'call addAdmin(%s, %s, %s, %s, %s, %s, %s)'
-        values = (payload['username'], payload['password'], payload['nome'], payload['genero'], payload['data_nascimento'], payload['telefone'], payload['email'])
-
-        try:
-            #Preencher os dados no utilizador e cliente
-            cur.execute(statement, values)
-            # Commitar as transações
-            conn.commit()
-
-            result = {
-                'status': StatusCodes['success'],
-                'message': 'Client registado com sucesso',
-                'user': payload['username'],
-                'token': generate_token(payload['username'], 'admin')
-            }
-        except (Exception, psycopg2.DatabaseError) as error:
-            logger.error(error)
-            conn.rollback()
-            result = {
-                'status': StatusCodes['db_error'],
-                'message': str(error)
-            }
-        finally:
-            if conn is not None:
-                cur.close()
-                conn.close()
-
-        return jsonify(result)
-    
-
-    # If token is invalid
-    elif(verify_admin_token(cur, admin_token) == False):
+    if not verify_admin_token(cur, admin_token):
         response = {
-                'status': StatusCodes ['invalid_token'],
-                'message': 'You do not have a valid admin token' 
+            'status': StatusCodes['invalid_token'],
+            'message': 'Admin token inválido'
         }
-        return jsonify(response) 
+        return jsonify(response)
+    
+    # Check payload keys
+    keysNeededAdmin = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email', 'funcao']
+    for key in keysNeededAdmin:
+        if key not in payload :
+            response = {
+                'status': StatusCodes ['api_error'],
+                'message': f'{key} key not in admin payload' 
+            }
+        return jsonify(response)
+    
+    # Encrypt password
+    payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
+    
+    statement = 'call addAdmin(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+    values = (payload['username'], payload['password'], payload['nome'], payload['genero'], payload['data_nascimento'], payload['telefone'], payload['email'], payload['funcao'], admin_username(admin_token))
+    
+    try:
+        #Preencher os dados no utilizador e cliente
+        cur.execute(statement, values)
+        # Commitar as transações
+        conn.commit()
+        result = {
+            'status': StatusCodes['success'],
+            'message': 'Administrador registado com sucesso',
+            'user': payload['username'],
+            'token': generate_token(payload['username'], 'admin')
+        }
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        conn.rollback()
+        result = {
+            'status': StatusCodes['db_error'],
+            'message': str(error)
+        }
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+    
+    return jsonify(result) 
 
 # REGISTAR O TRIPULANTE
 @app.route('/sgdproj/register/crew', methods = ['POST'])
-def register_user():
-    logger.info('POST /sgdproj/register/admin');   
+def register_crew():
+    logger.info('POST /sgdproj/register/crew');   
     logger.info("---- Novo tripulante  ----")
     logger.debug(f'payload: {payload}')
     payload = request.get_json()
@@ -244,11 +248,61 @@ def register_user():
     return jsonify(result)
 
 # Login Route
-@app.route('/sgdproj/login', methods = ['GET'])
+@app.route('/sgdproj/login', methods = ['PUT'])
 def login():
-    logger.info('GET /sgdproj/login')
-    if 
+    logger.info('PUT /sgdproj/login')
+    logger.info("---- Login  ----")
+    payload = request.get_json()
+    keysNeededLogin = ['username', 'password']
+    for key in keysNeededLogin:
+        if key not in payload:
+            response = {
+                'status': StatusCodes['api_error'],
+                'message': f'{key} value not in payload'
+            }
+            return jsonify(response)
+        
+    conn = db_connection()
+    cursor = conn.cursor()
 
+    payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
+
+    statement = 'SELECT login(%s, %s)'
+    values = (payload['username'], payload['password'])
+
+    try:
+        cursor.execute(statement, values)
+        tipo_user, = cursor.fetchone() 
+    
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        result = {
+            'status': StatusCodes['db_error'],
+            'message': 'Internal error',
+            'results':  f'Error: {error}'
+        }
+        return jsonify(result) 
+    
+    else:
+        if tipo_user in [1,2]:
+            role = 'user'
+        elif tipo_user == 3:
+            role = 'admin'
+        
+        token = generate_token (payload['username'], role )
+        
+        response = {
+            'status': StatusCodes['success'],
+            'message': 'Login successful',
+            'token': token
+        }
+    
+    finally:
+        if conn is not None:
+            cursor.close()
+            conn.close()
+    return jsonify(response)
+    
 # Secret JWT Token
 secret_key = os.getenv("secret_key")
 
@@ -261,7 +315,7 @@ def generate_token(username, role):
     token = jwt.encode(payload, secret_key, algorithm="HS256")
     return token
 
-def verify_admin_token(cur, token):
+def verify_admin_token(conn, token):
     # Decode token
     decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
     # Extract data from token
@@ -269,37 +323,186 @@ def verify_admin_token(cur, token):
     role = decoded_token.get("role")
     if role != 'admin':
         return False, {"message": "Not an admin"}
-    query = """
-    SELECT utilizador_username
-    FROM administrador
-    WHERE utilizador_username = %s;
-    """
+    
+    with conn.cursor() as cur:
+        query = """
+        SELECT utilizador_username
+        FROM administrador
+        WHERE utilizador_username = %s;
+        """
+
     cur.execute(query, (username,))
     admin_data = cur.fetchone()
+    
     if admin_data:
         return True
     else:
         return False
 
-def verify_auth_token(cur, token):
+def verify_auth_token(conn, token):
     # Decode token
     decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
     # Extract data from token
     username = decoded_token.get("username")
     role = decoded_token.get("role")
-    if role != 'user':
+    if role != 'user' or role != 'admin':
         return False, {"message": "Not an valid user"}
-    query = """
-    SELECT username
-    FROM utilizador
-    WHERE username = %s;
-    """
+    
+    with conn.cursor() as cur:
+        query = """
+        SELECT username
+        FROM utilizador
+        WHERE username = %s;
+        """
+
     cur.execute(query, (username,))
     user_data = cur.fetchone()
+    
     if user_data:
         return True
     else:
         return False
+    
+def admin_username(token):
+    # Decode token
+    decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
+    # Extract data from token
+    username_criador = decoded_token.get("username")
+    return username_criador
+
+    
+@app.route('/sgdproj/airport', methods = ['POST'])
+def cria_aeroporto():
+    logger.info('POST /sgdproj/airport');   
+    logger.info("---- Novo aeroporto  ----")
+    logger.debug(f'payload: {payload}')
+    
+    payload = request.get_json()
+    
+    # Verificar se o token existe no payload
+    if 'token' not in payload:
+        response = {
+            'status': StatusCodes['api_error'],
+            'message': 'Token não existe'
+        }
+        return jsonify(response)
+   
+    conn = db_connection()
+    cur = conn.cursor()
+    
+    # Admin token
+    admin_token = payload['token']
+
+    # Verify admin token
+    if not verify_admin_token(cur, admin_token):
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': 'Admin token inválido'
+        }
+        return jsonify(response)
+    
+    keysNeededAirport = ['nome', 'cidade', 'pais', 'id']
+    for key in keysNeededAirport:
+        if key not in payload:
+            response = {
+                'status': StatusCodes['api_error'],
+                'message': f'{key} value not in payload'
+            }
+            return jsonify(response)
+        
+    statement = ' call addAirport (%s;%s;%s;%s;%s)'
+    values = (payload['nome'], payload['cidade'], payload['pais'], payload['id'], admin_username(admin_token))
+
+    try:
+        #Preencher os dados na tabela aeroporto
+        cur.execute(statement, values)
+        # Commitar as transações
+        conn.commit()
+        result = {
+            'status': StatusCodes['success'],
+            'message': 'Aeroporto criado com sucesso',
+        }
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        conn.rollback()
+        result = {
+            'status': StatusCodes['db_error'],
+            'message': str(error)
+        }
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+    
+    return jsonify(result)
+
+@app.route('/sgdproj/flight', methods = ['POST'])
+def cria_voo():
+    logger.info('POST /sgdproj/flight');   
+    logger.info("---- Novo voo  ----")
+    logger.debug(f'payload: {payload}')
+    
+    payload = request.get_json()
+    
+    # Verificar se o token existe no payload
+    if 'token' not in payload:
+        response = {
+            'status': StatusCodes['api_error'],
+            'message': 'Token não existe'
+        }
+        return jsonify(response)
+   
+    conn = db_connection()
+    cur = conn.cursor()
+    
+    # Admin token
+    admin_token = payload['token']
+
+    # Verify admin token
+    if not verify_admin_token(cur, admin_token):
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': 'Admin token inválido'
+        }
+        return jsonify(response)
+    
+    keysNeededFlight = ['preco', 'capacidade', 'id', 'aeroporto_origem', 'aeroporto_destino']
+    for key in keysNeededFlight:
+        if key not in payload:
+            response = {
+                'status': StatusCodes['api_error'],
+                'message': f'{key} value not in payload'
+            }
+            return jsonify(response)
+    
+    statement = ' call addFlight (%s;%s;%s;%s;%s,%s)'
+    values = (payload['preco'], payload['capacidade'], payload['id'], admin_username(admin_token), payload['aeroporto_origem'], payload['aeroporto_destino'])
+
+    try:
+        #Preencher os dados na tabela voo
+        cur.execute(statement, values)
+        # Commitar as transações
+        conn.commit()
+        result = {
+            'status': StatusCodes['success'],
+            'message': 'Voo criado com sucesso',
+        }
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        conn.rollback()
+        result = {
+            'status': StatusCodes['db_error'],
+            'message': str(error)
+        }
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+    
+    return jsonify(result)
+        
+
+
 
 
 if __name__ == '__main__':
