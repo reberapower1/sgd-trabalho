@@ -1,5 +1,5 @@
 # 
-# Sistemas de Gestão de Dados 2024/2025
+# Bases de Dados 2020/2021
 # Trabalho Prático
 #
 # Authors: 
@@ -10,14 +10,14 @@ version: '3'
 services:
   db:
     build: ./postgresql
-    container_name: db_deijet
+    container_name: db_sgd
     expose:
       - "5432"
     ports:
       - "5433:5432"
-  api:
+  web:
     build: ./python
-    container_name: deijet_api
+    container_name: api
     volumes:
       - "./python/app:/app"
     expose:

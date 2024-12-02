@@ -53,13 +53,12 @@ StatusCodes = {
 
 def db_connection():
     try:
-        db = psycopg2.connect(
-            user="deijet",
-            password="tapsocialista",
-            host="db",
-            port="5432",
-            database="db_deijet"
-        )
+        # NOTE: change the host to "db" if you are running as a Docker container
+        db = psycopg2.connect(user = "postgres",
+                              password = "batata",
+                              host = "localhost", #"db",
+                              port = "5433",
+                              database = "deijet")
         print("Conexão à base de dados estabelecida com sucesso!")
         return db
     except psycopg2.OperationalError as e:
@@ -117,7 +116,7 @@ def register_client():
         logger.error(error)
         conn.rollback()
         result = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': str(error)
         }
     finally:
@@ -190,7 +189,7 @@ def register_admin():
         logger.error(error)
         conn.rollback()
         result = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': str(error)
         }
     finally:
@@ -238,7 +237,7 @@ def register_crew():
         logger.error(error)
         conn.rollback()
         result = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': str(error)
         }
     finally:
@@ -277,7 +276,7 @@ def login():
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
         result = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': 'Internal error',
             'results':  f'Error: {error}'
         }
@@ -426,7 +425,7 @@ def cria_aeroporto():
         logger.error(error)
         conn.rollback()
         result = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': str(error)
         }
     finally:
@@ -492,7 +491,7 @@ def cria_voo():
         logger.error(error)
         conn.rollback()
         result = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': str(error)
         }
     finally:
@@ -558,7 +557,7 @@ def cria_horario():
         logger.error(error)
         conn.rollback()
         result = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': str(error)
         }
     finally:
@@ -621,7 +620,7 @@ def checkar_rotas():
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
         result = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': str(error)
         }
     finally:
@@ -674,11 +673,11 @@ def checkar_lugar():
             'status': StatusCodes['success'],
             'results' : informacao
         }
-
+  
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
         result = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': str(error)
         }
     finally:
@@ -720,9 +719,6 @@ def compra():
                 'message': f'{key} value not in payload'
             }
             return jsonify(response)
-    
-
-
     try:
         # Conectar ao banco de dados
         conn = db_connection()
@@ -754,7 +750,7 @@ def compra():
         logger.error(error)
         conn.rollback()  # Reverter a transação em caso de erro
         response = {
-            'status': StatusCodes['db_error'],
+            'status': StatusCodes['internal_error'],
             'message': str(error)
         }
 
@@ -764,6 +760,139 @@ def compra():
             conn.close()
 
     return jsonify(response)
+
+@app.route('/sgdproj/report/topDestinations/<int:n>', methods = ['GET'])
+def n_destinos(n):
+    logger.info('GET /sgdproj/report/topDestinations/<int:n>');   
+    logger.info("---- Top destinos  ----")
+    logger.debug(f'payload: {payload}')
+    
+    payload = request.get_json()
+    
+    # Verificar se o token existe no payload
+    if 'token' not in payload:
+        response = {
+            'status': StatusCodes['api_error'],
+            'message': 'Token não existe'
+        }
+        return jsonify(response)
+   
+    conn = db_connection()
+    cur = conn.cursor()
+    
+    # token
+    token = payload['token']
+
+    # Verificar token
+    if not verify_auth_token(conn, token):
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': 'Token inválido'
+        }
+        return jsonify(response)
+       
+    statement = ' SELECT * from top_destinations (%s)'
+    values = ((n,))
+
+    try:
+        #Preencher os dados na tabela horário
+        cur.execute(statement, values)
+        valores = cur.fetchall()  
+        results = [
+            {"destination_airport": row[0], "number_flights": row[1]} for row in results
+        ]
+
+        # Retornar a resposta com os dados
+        result = {
+            'status': StatusCodes['success'],
+            'results' : results
+        }
+  
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        result = {
+            'status': StatusCodes['internal_error'],
+            'message': str(error)
+        }
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+    
+    return jsonify(result)
+
+@app.route('/sgdproj/report/topRoutes/<int:n>', methods=['GET'])
+def top_routes(n):
+    logger.info('GET /sgdproj/report/topRoutes/<int:n>')
+    logger.info("---- Top routes ----")
+
+    payload = request.get_json()
+
+    # Verificar se o token existe no payload
+    if 'token' not in payload:
+        response = {
+            'status': 400,
+            'message': 'Token não existe'
+        }
+        return jsonify(response)
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    # token
+    token = payload['token']
+
+    # Verificar token
+    if not verify_auth_token(conn, token):
+        response = {
+            'status': 401,
+            'message': 'Token inválido'
+        }
+        return jsonify(response)
+
+    statement = 'SELECT * FROM get_top_routes_last_12_months(%s);'
+    values = (n,)
+
+    try:
+        cur.execute(statement, values)
+        rows = cur.fetchall()
+
+        # Estrutura para armazenar os resultados agrupados por mês
+        results = {}
+        for row in rows:
+            month = row[0]
+            flight_id = row[1]
+            total_passengers = row[2]
+
+            if month not in results:
+                results[month] = []
+            results[month].append({
+                "flight_id": flight_id,
+                "total_passengers": total_passengers
+            })
+
+        # Formatar a resposta para a API
+        formatted_results = [
+            {"month": month, "topN": flights} for month, flights in sorted(results.items())
+        ]
+
+        result = {
+            'status': 200,
+            'results': formatted_results
+        }
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        result = {
+            'status': 500,
+            'message': str(error)
+        }
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+
+    return jsonify(result)
 
 
 

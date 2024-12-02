@@ -442,3 +442,841 @@ API v1.0 online: http://127.0.0.1:5000
 
 WARNING:werkzeug: * Debugger is active!
 INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.66:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 00:16:07] "[33mPOST /login HTTP/1.1[0m" 404 -
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 00:16:34] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\logging\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\datetime.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 00:19:07] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 00:19:42] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 00:23:43] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 00:33:07] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.1.66:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 00:36:39] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 00:37:22] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\json\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\psycopg2\\__init__.py', reloading
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 13:56:27] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 13:57:06] "[33mGET / HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 13:57:06] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 14:35:01] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 14:38:46] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 14:45:51] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\app.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\app.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\psycopg2\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\psycopg2\\__init__.py', reloading
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:23:19] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:25:20] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:26:45] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:27:31] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:31:39] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:31:52] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:33:53] "[33mGET /sgdproj HTTP/1.1[0m" 404 -
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:34:00] "[33mGET / HTTP/1.1[0m" 404 -
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:34:25] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.16.2.14:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:logger:---- Novo cliente  ----
+DEBUG:logger:payload: {'username': 'banana', 'password': 'minion'}
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 15:38:59] "POST /sgdproj/register/client HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\app.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\psycopg2\\__init__.py', reloading
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 16:37:58] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://194.210.174.81:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 16:38:18] "[35m[1mPOST /sgdproj/register/client HTTP/1.1[0m" 500 -
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://194.210.174.81:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:logger:POST /sgdproj/register/user
+INFO:logger:---- Novo cliente  ----
+DEBUG:logger:payload: {'username': 'banana', 'password': 'minion'}
+INFO:werkzeug:127.0.0.1 - - [02/Dec/2024 16:38:57] "POST /sgdproj/register/client HTTP/1.1" 200 -
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Detected change in 'c:\\Users\\didia\\OneDrive\\Ambiente de Trabalho\\sgd-trabalho\\python\\app\\deijet-api.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
+INFO:logger:
+---------------------------------------------------------------
+API v1.0 online: http://127.0.0.1:5000
+
+
+WARNING:werkzeug: * Debugger is active!
+INFO:werkzeug: * Debugger PIN: 145-031-982
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\scaffold.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\globals.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\wrappers.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\werkzeug\\wrappers\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\werkzeug\\wrappers\\request.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\werkzeug\\sansio\\request.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\json\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\werkzeug\\wrappers\\response.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\werkzeug\\sansio\\response.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\jwt\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\hashlib.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\dotenv\\__init__.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\dotenv\\main.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\sessions.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\json\\tag.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\config.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\flask\\typing.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\werkzeug\\utils.py', reloading
+INFO:werkzeug: * Detected change in 'C:\\Users\\didia\\anaconda3\\Lib\\site-packages\\werkzeug\\_internal.py', reloading
+INFO:werkzeug: * Restarting with watchdog (windowsapi)
