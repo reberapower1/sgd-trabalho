@@ -370,7 +370,6 @@ def admin_username(token):
     username_criador = decoded_token.get("username")
     return username_criador
 
-    
 @app.route('/sgdproj/airport', methods = ['POST'])
 def cria_aeroporto():
     logger.info('POST /sgdproj/airport');   
@@ -394,7 +393,7 @@ def cria_aeroporto():
     admin_token = payload['token']
 
     # Verify admin token
-    if not verify_admin_token(cur, admin_token):
+    if not verify_admin_token(conn, admin_token):
         response = {
             'status': StatusCodes['invalid_token'],
             'message': 'Admin token inválido'
@@ -421,6 +420,7 @@ def cria_aeroporto():
         result = {
             'status': StatusCodes['success'],
             'message': 'Aeroporto criado com sucesso',
+            'results': payload['id']
         }
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
@@ -459,7 +459,7 @@ def cria_voo():
     admin_token = payload['token']
 
     # Verify admin token
-    if not verify_admin_token(cur, admin_token):
+    if not verify_admin_token(conn, admin_token):
         response = {
             'status': StatusCodes['invalid_token'],
             'message': 'Admin token inválido'
@@ -486,6 +486,7 @@ def cria_voo():
         result = {
             'status': StatusCodes['success'],
             'message': 'Voo criado com sucesso',
+            'results':  payload['id']
         }
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
@@ -501,7 +502,268 @@ def cria_voo():
     
     return jsonify(result)
         
+@app.route('/sgdproj/schedule', methods = ['POST'])
+def cria_horario():
+    logger.info('POST /sgdproj/schedule');   
+    logger.info("---- Novo horário  ----")
+    logger.debug(f'payload: {payload}')
+    
+    payload = request.get_json()
+    
+    # Verificar se o token existe no payload
+    if 'token' not in payload:
+        response = {
+            'status': StatusCodes['api_error'],
+            'message': 'Token não existe'
+        }
+        return jsonify(response)
+   
+    conn = db_connection()
+    cur = conn.cursor()
+    
+    # Admin token
+    admin_token = payload['token']
 
+    # Verify admin token
+    if not verify_admin_token(conn, admin_token):
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': 'Admin token inválido'
+        }
+        return jsonify(response)
+    
+    keysNeededSchedule = ['partida' ,'chegada','id',' voo_id','administrador_utilizador_username']
+    for key in keysNeededSchedule:
+        if key not in payload:
+            response = {
+                'status': StatusCodes['api_error'],
+                'message': f'{key} value not in payload'
+            }
+            return jsonify(response)
+    
+    statement = ' call addSchedule (%s;%s;%s;%s;%s)'
+    values = (payload['partida'], payload['chegada'], payload['id'], payload['voo_id'], admin_username(admin_token))
+
+    try:
+        #Preencher os dados na tabela horário
+        cur.execute(statement, values)
+        # Commitar as transações
+        conn.commit()
+        result = {
+            'status': StatusCodes['success'],
+            'message': 'Horário criado com sucesso',
+            'results': payload['id']
+        }
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        conn.rollback()
+        result = {
+            'status': StatusCodes['db_error'],
+            'message': str(error)
+        }
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+    
+    return jsonify(result)
+
+@app.route('/sgdproj/check_routes', methods = ['GET'])
+def checkar_rotas():
+    logger.info('GET /sgdproj/check_routes');   
+    logger.info("---- Rotas Disponíveis  ----")
+    logger.debug(f'payload: {payload}')
+    
+    payload = request.get_json()
+    
+    # Verificar se o token existe no payload
+    if 'token' not in payload:
+        response = {
+            'status': StatusCodes['api_error'],
+            'message': 'Token não existe'
+        }
+        return jsonify(response)
+   
+    conn = db_connection()
+    cur = conn.cursor()
+    
+    # token
+    token = payload['token']
+
+    # Verificar token
+    if not verify_auth_token(conn, token):
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': 'Token inválido'
+        }
+        return jsonify(response)
+       
+    statement = ' SELECT * from check_rotas (%s;%s)'
+    values = (payload['aeroporto_origem'], payload['aeroporto_destino'])
+
+    try:
+        #Preencher os dados na tabela horário
+        cur.execute(statement, values)
+
+        # Obter os resultados
+        linhas = cur.fetchall()
+        colunas = [desc[0] for desc in cur.description]  # Obter os nomes das colunas
+
+        # Formatando os resultados em um dicionário
+        informacao = [dict(zip(colunas, linha)) for linha in linhas]
+
+        # Retornar a resposta com os dados
+        result = {
+            'status': StatusCodes['success'],
+            'results': informacao
+        }
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        result = {
+            'status': StatusCodes['db_error'],
+            'message': str(error)
+        }
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+    
+    return jsonify(result)
+
+@app.route('/sgdproj/check_seats', methods = ['GET'])
+def checkar_lugar():
+    logger.info('GET /sgdproj/check_seats  ');   
+    logger.info("---- Lugares Disponíveis  ----")
+    logger.debug(f'payload: {payload}')
+    
+    payload = request.get_json()
+    
+    # Verificar se o token existe no payload
+    if 'token' not in payload:
+        response = {
+            'status': StatusCodes['api_error'],
+            'message': 'Token não existe'
+        }
+        return jsonify(response)
+   
+    conn = db_connection()
+    cur = conn.cursor()
+    
+    # token
+    token = payload['token']
+
+    # Verificar token
+    if not verify_auth_token(conn, token):
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': 'Token inválido'
+        }
+        return jsonify(response)
+       
+    statement = ' SELECT * from check_seat (%s;%s)'
+    values = (payload['voo_id'], payload['horario_id'])
+
+    try:
+        #Preencher os dados na tabela horário
+        cur.execute(statement, values)
+        informacao = cur.fetchone()[0]  
+
+        # Retornar a resposta com os dados
+        result = {
+            'status': StatusCodes['success'],
+            'results' : informacao
+        }
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        result = {
+            'status': StatusCodes['db_error'],
+            'message': str(error)
+        }
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+    
+    return jsonify(result)
+
+@app.route('/sgdproj/book_flight', methods=['POST'])
+def compra():
+    logger.info('POST /sgdproj/book_flight')
+    logger.info("---- Reservar um voo ----")
+
+    payload = request.get_json()
+    logger.debug(f'payload: {payload}')
+
+    # Verificar se o token existe no payload
+    if 'token' not in payload:
+        response = {
+            'status': StatusCodes['api_error'],
+            'message': 'Token não existe'
+        }
+        return jsonify(response)
+    
+    # Verificar token
+    if not verify_auth_token(conn, token):
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': 'Token inválido'
+        }
+        return jsonify(response)
+    
+    keysNeededBook = ['partida' ,'chegada','id',' voo_id','administrador_utilizador_username']
+    for key in keysNeededBook:
+        if key not in payload:
+            response = {
+                'status': StatusCodes['api_error'],
+                'message': f'{key} value not in payload'
+            }
+            return jsonify(response)
+    
+
+
+    try:
+        # Conectar ao banco de dados
+        conn = db_connection()
+        cur = conn.cursor()
+
+        # Configurar o nível de isolamento de transação para SERIALIZABLE
+        conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
+
+        # Obter os parâmetros necessários do payload
+        voo_id = payload['flight_code']
+        horario_id = payload['schedule_id']
+        seat_id = payload['seat_id']
+        token = payload['token']
+
+        # Chamar o procedimento armazenado para a compra
+        cur.execute("""
+            CALL book_flight(%s, %s, %s, %s);
+        """, (voo_id, horario_id, seat_id, token))
+
+        response = {
+            'status': StatusCodes['success'],
+            'results': {'schedule_id': horario_id}
+        }
+
+        # Commitar a transação
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        conn.rollback()  # Reverter a transação em caso de erro
+        response = {
+            'status': StatusCodes['db_error'],
+            'message': str(error)
+        }
+
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+
+    return jsonify(response)
 
 
 
