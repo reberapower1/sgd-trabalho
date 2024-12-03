@@ -673,7 +673,7 @@ def checkar_lugar():
         }
         return jsonify(response)
     
-    keysNeededSchedule = ['aeroporto_origem','aeroporto_destino']
+    keysNeededSchedule = ['voo_id','horario_id']
     for key in keysNeededSchedule:
         if key not in payload:
             response = {
@@ -725,6 +725,12 @@ def compra():
         }
         return jsonify(response)
     
+    # token
+    token = payload['token']
+
+    conn = db_connection()
+    cur = conn.cursor()
+    
     # Verificar token
     if not verify_auth_token(conn, token):
         response = {
@@ -733,7 +739,7 @@ def compra():
         }
         return jsonify(response)
     
-    keysNeededBook = ['partida' ,'chegada','id',' voo_id','administrador_utilizador_username']
+    keysNeededBook = ['horario_id', 'seats']
     for key in keysNeededBook:
         if key not in payload:
             response = {
@@ -741,6 +747,9 @@ def compra():
                 'message': f'{key} value not in payload'
             }
             return jsonify(response)
+        
+    statement = 'call addCompra( %s, %s, %s)'
+    values = (payload['horario_id'], admin_username(payload['token']), payload['seats'])
     try:
         # Conectar ao banco de dados
         conn = db_connection()
@@ -749,23 +758,13 @@ def compra():
         # Configurar o nível de isolamento de transação para SERIALIZABLE
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
 
-        # Obter os parâmetros necessários do payload
-        voo_id = payload['flight_code']
-        horario_id = payload['schedule_id']
-        seat_id = payload['seat_id']
-        token = payload['token']
-
-        # Chamar o procedimento armazenado para a compra
-        cur.execute("""
-            CALL book_flight(%s, %s, %s, %s);
-        """, (voo_id, horario_id, seat_id, token))
+        cur.execute(statement, values)
 
         response = {
             'status': StatusCodes['success'],
-            'results': {'schedule_id': horario_id}
+            'results': {'schedule_id': payload['horario_id']}
         }
 
-        # Commitar a transação
         conn.commit()
 
     except (Exception, psycopg2.DatabaseError) as error:

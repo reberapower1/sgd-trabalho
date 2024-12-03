@@ -36,8 +36,8 @@ CREATE TABLE administrador (
 CREATE TABLE compra (
 	id				 BIGSERIAL,
 	data			 TIMESTAMP NOT NULL,
+	valor			 FLOAT(8) NOT NULL,
 	horario_id			 INTEGER NOT NULL,
-	horario_preco		 FLOAT(8) NOT NULL,
 	cliente_utilizador_username VARCHAR(512) NOT NULL,
 	PRIMARY KEY(id)
 );
@@ -123,8 +123,7 @@ CREATE TABLE assento (
 CREATE TABLE tripulante_horario (
 	tripulante_utilizador_username VARCHAR(512),
 	horario_id			 INTEGER,
-	horario_preco			 FLOAT(8),
-	PRIMARY KEY(tripulante_utilizador_username,horario_id,horario_preco)
+	PRIMARY KEY(tripulante_utilizador_username,horario_id)
 );
 
 CREATE TABLE tripulante_tripulante (
@@ -137,6 +136,7 @@ ALTER TABLE cliente ADD CONSTRAINT cliente_fk1 FOREIGN KEY (utilizador_username)
 ALTER TABLE tripulante ADD CONSTRAINT tripulante_fk1 FOREIGN KEY (utilizador_username) REFERENCES utilizador(username);
 ALTER TABLE administrador ADD CONSTRAINT administrador_fk1 FOREIGN KEY (administrador_utilizador_username) REFERENCES administrador(utilizador_username);
 ALTER TABLE administrador ADD CONSTRAINT administrador_fk2 FOREIGN KEY (utilizador_username) REFERENCES utilizador(username);
+ALTER TABLE compra ADD CONSTRAINT compra_fk1 FOREIGN KEY (horario_id) REFERENCES horario(id);
 ALTER TABLE compra ADD CONSTRAINT compra_fk2 FOREIGN KEY (cliente_utilizador_username) REFERENCES cliente(utilizador_username);
 ALTER TABLE voo ADD CONSTRAINT voo_fk1 FOREIGN KEY (administrador_utilizador_username) REFERENCES administrador(utilizador_username);
 ALTER TABLE voo ADD CONSTRAINT voo_fk2 FOREIGN KEY (aeroporto_origem) REFERENCES aeroporto(id);
@@ -153,13 +153,9 @@ ALTER TABLE bilhete ADD CONSTRAINT bilhete_fk1 FOREIGN KEY (compra_id) REFERENCE
 ALTER TABLE bilhete ADD CONSTRAINT bilhete_fk2 FOREIGN KEY (assento_id, assento_horario_id) REFERENCES assento(id, horario_id);
 ALTER TABLE assento ADD CONSTRAINT assento_fk1 FOREIGN KEY (horario_id) REFERENCES horario(id);
 ALTER TABLE tripulante_horario ADD CONSTRAINT tripulante_horario_fk1 FOREIGN KEY (tripulante_utilizador_username) REFERENCES tripulante(utilizador_username);
-ALTER TABLE tripulante_horario ADD CONSTRAINT tripulante_horario_fk2 FOREIGN KEY (horario_id, horario_preco) REFERENCES horario(id, preco);
+ALTER TABLE tripulante_horario ADD CONSTRAINT tripulante_horario_fk2 FOREIGN KEY (horario_id) REFERENCES horario(id);
 ALTER TABLE tripulante_tripulante ADD CONSTRAINT tripulante_tripulante_fk1 FOREIGN KEY (tripulante_utilizador_username) REFERENCES tripulante(utilizador_username);
 ALTER TABLE tripulante_tripulante ADD CONSTRAINT tripulante_tripulante_fk2 FOREIGN KEY (tripulante_utilizador_username1) REFERENCES tripulante(utilizador_username);
-
-
-
-
 
 CREATE OR REPLACE PROCEDURE addUtilizador(
     username     utilizador.username%type,
@@ -428,17 +424,91 @@ CREATE OR REPLACE FUNCTION check_seat(
     voo_id_check voo.id%type,
     horario_id_check horario.id%type
 )
-RETURNS INTEGER [] AS $$
+RETURNS VARCHAR [] AS $$
 BEGIN
     RETURN ARRAY (
-        SELECT assento_id
-        FROM bilhete_assento
-        JOIN horario ON bilhete_assento.horario_id = horario.id
+        SELECT assento.id
+        FROM assento
+        JOIN horario ON assento.horario_id = horario.id
         JOIN voo ON horario.voo_id = voo.id
-		WHERE voo_id_check = voo.id and horario_id_check = horario.id and assento_disponibilidade = true
+		WHERE voo_id_check = voo.id and horario_id_check = horario.id and disponibilidade = true
     );
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION verificar_disponibilidade_assento(
+    id_check assento.id%type,
+    horario_check horario.id%type
+)
+RETURNS BOOLEAN AS $$
+DECLARE
+    disponibilidade BOOLEAN;
+BEGIN
+    SELECT assento.disponibilidade INTO disponibilidade
+    FROM assento
+    WHERE assento.id = id_check AND assento.horario_id = horario_check;
+
+    IF disponibilidade IS NULL THEN
+        RAISE EXCEPTION 'Assento % não encontrado no horário %.', assento_id_input, horario_id_input;
+    END IF;
+
+    RETURN disponibilidade;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE addCompra(
+    horario_check INTEGER,
+    cliente_username VARCHAR(512),
+    assentos_array VARCHAR(512)[]
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+    preco_horario horario.preco%type;
+    total_preco horario.preco%type;
+    assento_id assento.id%type;
+    compra_id compra.id%type;
+    disponibilidade assento.disponibilidade%type;
+BEGIN
+    -- Verificar o preço do horário
+    SELECT preco INTO preco_horario
+    FROM horario
+    WHERE horario.id = horario_check;
+
+    IF preco_horario IS NULL THEN
+        RAISE EXCEPTION 'Horário % não encontrado.', horario_check;
+    END IF;
+
+    -- Percorrer todos os assentos para verificar disponibilidade
+    FOREACH assento_id IN ARRAY assentos_array LOOP
+        disponibilidade := verificar_disponibilidade_assento(assento_id, horario_check);
+
+        IF NOT disponibilidade THEN
+            RAISE EXCEPTION 'Assento % não está disponível.', assento_id;
+        END IF;
+    END LOOP;
+
+    -- Calcular o preço total
+    total_preco := array_length(assentos_array, 1) * preco_horario;
+
+    -- Inserir na tabela compra
+    INSERT INTO compra (data, valor, horario_id, cliente_utilizador_username)
+    VALUES (NOW(), total_preco, horario_check, cliente_username)
+    RETURNING id INTO compra_id;
+
+    RAISE NOTICE 'Compra % sucedida', compra_id;
+
+    -- Atualizar a disponibilidade dos assentos para false
+    FOREACH assento_id IN ARRAY assentos_input LOOP
+        UPDATE assento
+        SET disponibilidade = false
+        WHERE assento.id = assento_id AND horario_id = horario_check;
+    END LOOP;
+
+    RAISE NOTICE 'Disponibilidade dos assentos atualizada.';
+END;
+$$;
+
+
 
 CREATE OR REPLACE FUNCTION top_destinations(n INTEGER)
 RETURNS TABLE (
