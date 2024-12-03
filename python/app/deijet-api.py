@@ -40,10 +40,9 @@ load_dotenv()
 app = Flask(__name__)
 
 StatusCodes = {
-    'sucess': 200,
+    'success': 200,
     'api_error': 400,
     'invalid_token': 401,
-    'unauthorized_access':403,
     'internal_error': 500
 }
 
@@ -115,9 +114,10 @@ def register_client():
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
         conn.rollback()
+        error_message = str(error).split('\n')[0]
         result = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
@@ -151,7 +151,7 @@ def register_admin():
     admin_token = payload['token']
 
     # Verify admin token
-    if not verify_admin_token(cur, admin_token):
+    if not verify_admin_token(conn, admin_token):
         response = {
             'status': StatusCodes['invalid_token'],
             'message': 'Admin token inválido'
@@ -166,7 +166,7 @@ def register_admin():
                 'status': StatusCodes ['api_error'],
                 'message': f'{key} key not in admin payload' 
             }
-        return jsonify(response)
+            return jsonify(response)
     
     # Encrypt password
     payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
@@ -188,9 +188,10 @@ def register_admin():
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
         conn.rollback()
+        error_message = str(error).split('\n')[0]
         result = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
@@ -203,13 +204,15 @@ def register_admin():
 @app.route('/sgdproj/register/crew', methods = ['POST'])
 def register_crew():
     logger.info('POST /sgdproj/register/crew');   
-    logger.info("---- Novo tripulante  ----")
-    logger.debug(f'payload: {payload}')
     payload = request.get_json()
+   
     conn = db_connection()
     cur = conn.cursor()
+
+    logger.info("---- Novo tripulante  ----")
+    logger.debug(f'payload: {payload}')
     # Check payload keys
-    keysNeededCrew = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email', 'funcao','tripulante_utilizador_username']
+    keysNeededCrew = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email', 'funcao']
     for key in keysNeededCrew:
         if key not in payload :
             response = {
@@ -220,8 +223,8 @@ def register_crew():
         
     # Encrypt password
     payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
-    statement = 'call addCrew(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-    values = (payload['username'], payload['password'], payload['nome'], payload['genero'], payload['data_nascimento'], payload['telefone'], payload['email'], payload['funcao'], payload['tripulante_utilizador_username'])
+    statement = 'call addCrew(%s, %s, %s, %s, %s, %s, %s, %s)'
+    values = (payload['username'], payload['password'], payload['nome'], payload['genero'], payload['data_nascimento'], payload['telefone'], payload['email'], payload['funcao'])
     
     try:
         #Preencher os dados no utilizador e tripulante
@@ -235,10 +238,11 @@ def register_crew():
         }
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
+        error_message = str(error).split('\n')[0]
         conn.rollback()
         result = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
@@ -315,11 +319,10 @@ def generate_token(username, role):
     return token
 
 def verify_admin_token(conn, token):
-    # Decode token
     decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
-    # Extract data from token
     username = decoded_token.get("username")
     role = decoded_token.get("role")
+    
     if role != 'admin':
         return False, {"message": "Not an admin"}
     
@@ -330,8 +333,8 @@ def verify_admin_token(conn, token):
         WHERE utilizador_username = %s;
         """
 
-    cur.execute(query, (username,))
-    admin_data = cur.fetchone()
+        cur.execute(query, (username,))
+        admin_data = cur.fetchone()
     
     if admin_data:
         return True
@@ -339,9 +342,7 @@ def verify_admin_token(conn, token):
         return False
 
 def verify_auth_token(conn, token):
-    # Decode token
     decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
-    # Extract data from token
     username = decoded_token.get("username")
     role = decoded_token.get("role")
     if role != 'user' or role != 'admin':
@@ -354,8 +355,8 @@ def verify_auth_token(conn, token):
         WHERE username = %s;
         """
 
-    cur.execute(query, (username,))
-    user_data = cur.fetchone()
+        cur.execute(query, (username,))
+        user_data = cur.fetchone()
     
     if user_data:
         return True
@@ -373,9 +374,8 @@ def admin_username(token):
 def cria_aeroporto():
     logger.info('POST /sgdproj/airport');   
     logger.info("---- Novo aeroporto  ----")
-    logger.debug(f'payload: {payload}')
-    
     payload = request.get_json()
+    logger.debug(f'payload: {payload}')
     
     # Verificar se o token existe no payload
     if 'token' not in payload:
@@ -408,7 +408,7 @@ def cria_aeroporto():
             }
             return jsonify(response)
         
-    statement = ' call addAirport (%s;%s;%s;%s;%s)'
+    statement = 'call addAeroporto (%s,%s,%s,%s,%s)'
     values = (payload['nome'], payload['cidade'], payload['pais'], payload['id'], admin_username(admin_token))
 
     try:
@@ -439,9 +439,10 @@ def cria_aeroporto():
 def cria_voo():
     logger.info('POST /sgdproj/flight');   
     logger.info("---- Novo voo  ----")
-    logger.debug(f'payload: {payload}')
-    
+
     payload = request.get_json()
+
+    logger.debug(f'payload: {payload}')
     
     # Verificar se o token existe no payload
     if 'token' not in payload:
@@ -457,7 +458,7 @@ def cria_voo():
     # Admin token
     admin_token = payload['token']
 
-    # Verify admin token
+    # Verificar admin token
     if not verify_admin_token(conn, admin_token):
         response = {
             'status': StatusCodes['invalid_token'],
@@ -465,7 +466,7 @@ def cria_voo():
         }
         return jsonify(response)
     
-    keysNeededFlight = ['preco', 'capacidade', 'id', 'aeroporto_origem', 'aeroporto_destino']
+    keysNeededFlight = ['capacidade', 'id', 'aeroporto_origem', 'aeroporto_destino']
     for key in keysNeededFlight:
         if key not in payload:
             response = {
@@ -474,13 +475,13 @@ def cria_voo():
             }
             return jsonify(response)
     
-    statement = ' call addFlight (%s;%s;%s;%s;%s,%s)'
-    values = (payload['preco'], payload['capacidade'], payload['id'], admin_username(admin_token), payload['aeroporto_origem'], payload['aeroporto_destino'])
+    statement = ' call addVoo (%s, %s, %s, %s, %s)'
+    values = (payload['capacidade'], payload['id'], admin_username(admin_token), payload['aeroporto_origem'], payload['aeroporto_destino'])
 
     try:
         #Preencher os dados na tabela voo
         cur.execute(statement, values)
-        # Commitar as transações
+        # Validar as transações
         conn.commit()
         result = {
             'status': StatusCodes['success'],
@@ -505,9 +506,10 @@ def cria_voo():
 def cria_horario():
     logger.info('POST /sgdproj/schedule');   
     logger.info("---- Novo horário  ----")
-    logger.debug(f'payload: {payload}')
-    
+
     payload = request.get_json()
+
+    logger.debug(f'payload: {payload}')
     
     # Verificar se o token existe no payload
     if 'token' not in payload:
@@ -531,7 +533,7 @@ def cria_horario():
         }
         return jsonify(response)
     
-    keysNeededSchedule = ['partida' ,'chegada','id',' voo_id','administrador_utilizador_username']
+    keysNeededSchedule = ['partida' ,'chegada','id','preco','voo_id']
     for key in keysNeededSchedule:
         if key not in payload:
             response = {
@@ -540,8 +542,8 @@ def cria_horario():
             }
             return jsonify(response)
     
-    statement = ' call addSchedule (%s;%s;%s;%s;%s)'
-    values = (payload['partida'], payload['chegada'], payload['id'], payload['voo_id'], admin_username(admin_token))
+    statement = ' call addhorario (%s,%s,%s,%s,%s, %s)'
+    values = (payload['partida'], payload['chegada'], payload['id'],payload['preco'] ,payload['voo_id'], admin_username(admin_token))
 
     try:
         #Preencher os dados na tabela horário
@@ -571,9 +573,10 @@ def cria_horario():
 def checkar_rotas():
     logger.info('GET /sgdproj/check_routes');   
     logger.info("---- Rotas Disponíveis  ----")
-    logger.debug(f'payload: {payload}')
-    
+
     payload = request.get_json()
+
+    logger.debug(f'payload: {payload}')
     
     # Verificar se o token existe no payload
     if 'token' not in payload:
@@ -596,8 +599,17 @@ def checkar_rotas():
             'message': 'Token inválido'
         }
         return jsonify(response)
+    
+    keysNeededSchedule = ['aeroporto_origem','aeroporto_destino']
+    for key in keysNeededSchedule:
+        if key not in payload:
+            response = {
+                'status': StatusCodes['api_error'],
+                'message': f'{key} value not in payload'
+            }
+            return jsonify(response)
        
-    statement = ' SELECT * from check_rotas (%s;%s)'
+    statement = ' SELECT * from check_rotas (%s,%s)'
     values = (payload['aeroporto_origem'], payload['aeroporto_destino'])
 
     try:
@@ -634,9 +646,10 @@ def checkar_rotas():
 def checkar_lugar():
     logger.info('GET /sgdproj/check_seats  ');   
     logger.info("---- Lugares Disponíveis  ----")
-    logger.debug(f'payload: {payload}')
-    
+
     payload = request.get_json()
+    
+    logger.debug(f'payload: {payload}')
     
     # Verificar se o token existe no payload
     if 'token' not in payload:
@@ -659,8 +672,17 @@ def checkar_lugar():
             'message': 'Token inválido'
         }
         return jsonify(response)
+    
+    keysNeededSchedule = ['aeroporto_origem','aeroporto_destino']
+    for key in keysNeededSchedule:
+        if key not in payload:
+            response = {
+                'status': StatusCodes['api_error'],
+                'message': f'{key} value not in payload'
+            }
+            return jsonify(response)
        
-    statement = ' SELECT * from check_seat (%s;%s)'
+    statement = ' SELECT * from check_seat (%s,%s)'
     values = (payload['voo_id'], payload['horario_id'])
 
     try:

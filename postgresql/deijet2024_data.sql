@@ -43,7 +43,7 @@ CREATE TABLE compra (
 );
 
 CREATE TABLE voo (
-	capacidade			 INTEGER NOT NULL DEFAULT capacidade > 0,
+	capacidade			 INTEGER NOT NULL,
 	id				 INTEGER,
 	administrador_utilizador_username VARCHAR(512) NOT NULL,
 	aeroporto_origem			 INTEGER NOT NULL,
@@ -91,7 +91,7 @@ CREATE TABLE horario (
 	preco				 FLOAT(8),
 	voo_id				 INTEGER NOT NULL,
 	administrador_utilizador_username VARCHAR(512) NOT NULL,
-	PRIMARY KEY(id,preco)
+	PRIMARY KEY(id)
 );
 
 CREATE TABLE aeroporto (
@@ -103,16 +103,21 @@ CREATE TABLE aeroporto (
 	PRIMARY KEY(id)
 );
 
-CREATE TABLE bilhete_assento (
-	nome			 VARCHAR(512),
-	id			 BIGINT,
-	assento_id		 VARCHAR(512) NOT NULL,
-	assento_localizacao	 BOOL NOT NULL,
-	assento_disponibilidade BOOL NOT NULL,
+CREATE TABLE bilhete (
+	nome		 VARCHAR(512),
+	id		 BIGINT,
 	compra_id		 BIGINT,
-	horario_id		 INTEGER NOT NULL,
-	horario_preco		 FLOAT(8) NOT NULL,
+	assento_id	 VARCHAR(512) NOT NULL,
+	assento_horario_id INTEGER NOT NULL,
 	PRIMARY KEY(compra_id)
+);
+
+CREATE TABLE assento (
+	id		 VARCHAR(512) NOT NULL,
+	localizacao	 BOOL NOT NULL,
+	disponibilidade BOOL NOT NULL,
+	horario_id	 INTEGER,
+	PRIMARY KEY(id,horario_id)
 );
 
 CREATE TABLE tripulante_horario (
@@ -132,11 +137,10 @@ ALTER TABLE cliente ADD CONSTRAINT cliente_fk1 FOREIGN KEY (utilizador_username)
 ALTER TABLE tripulante ADD CONSTRAINT tripulante_fk1 FOREIGN KEY (utilizador_username) REFERENCES utilizador(username);
 ALTER TABLE administrador ADD CONSTRAINT administrador_fk1 FOREIGN KEY (administrador_utilizador_username) REFERENCES administrador(utilizador_username);
 ALTER TABLE administrador ADD CONSTRAINT administrador_fk2 FOREIGN KEY (utilizador_username) REFERENCES utilizador(username);
-ALTER TABLE compra ADD CONSTRAINT compra_fk1 FOREIGN KEY (horario_id, horario_preco) REFERENCES horario(id, preco);
 ALTER TABLE compra ADD CONSTRAINT compra_fk2 FOREIGN KEY (cliente_utilizador_username) REFERENCES cliente(utilizador_username);
 ALTER TABLE voo ADD CONSTRAINT voo_fk1 FOREIGN KEY (administrador_utilizador_username) REFERENCES administrador(utilizador_username);
-ALTER TABLE voo ADD CONSTRAINT voo_fk2 FOREIGN KEY (aeroporto_id) REFERENCES aeroporto(id);
-ALTER TABLE voo ADD CONSTRAINT voo_fk3 FOREIGN KEY (aeroporto_id1) REFERENCES aeroporto(id);
+ALTER TABLE voo ADD CONSTRAINT voo_fk2 FOREIGN KEY (aeroporto_origem) REFERENCES aeroporto(id);
+ALTER TABLE voo ADD CONSTRAINT voo_fk3 FOREIGN KEY (aeroporto_destino) REFERENCES aeroporto(id);
 ALTER TABLE pagamento ADD CONSTRAINT pagamento_fk1 FOREIGN KEY (compra_id) REFERENCES compra(id);
 ALTER TABLE pagamento_mbway ADD CONSTRAINT pagamento_mbway_fk1 FOREIGN KEY (pagamento_id) REFERENCES pagamento(id);
 ALTER TABLE pagamento_credito ADD CONSTRAINT pagamento_credito_fk1 FOREIGN KEY (pagamento_id) REFERENCES pagamento(id);
@@ -144,13 +148,16 @@ ALTER TABLE pagamento_debito ADD CONSTRAINT pagamento_debito_fk1 FOREIGN KEY (pa
 ALTER TABLE horario ADD CONSTRAINT horario_fk1 FOREIGN KEY (voo_id) REFERENCES voo(id);
 ALTER TABLE horario ADD CONSTRAINT horario_fk2 FOREIGN KEY (administrador_utilizador_username) REFERENCES administrador(utilizador_username);
 ALTER TABLE aeroporto ADD CONSTRAINT aeroporto_fk1 FOREIGN KEY (administrador_utilizador_username) REFERENCES administrador(utilizador_username);
-ALTER TABLE bilhete_assento ADD UNIQUE (id, assento_id);
-ALTER TABLE bilhete_assento ADD CONSTRAINT bilhete_assento_fk1 FOREIGN KEY (compra_id) REFERENCES compra(id);
-ALTER TABLE bilhete_assento ADD CONSTRAINT bilhete_assento_fk2 FOREIGN KEY (horario_id, horario_preco) REFERENCES horario(id, preco);
+ALTER TABLE bilhete ADD UNIQUE (id, assento_id, assento_horario_id);
+ALTER TABLE bilhete ADD CONSTRAINT bilhete_fk1 FOREIGN KEY (compra_id) REFERENCES compra(id);
+ALTER TABLE bilhete ADD CONSTRAINT bilhete_fk2 FOREIGN KEY (assento_id, assento_horario_id) REFERENCES assento(id, horario_id);
+ALTER TABLE assento ADD CONSTRAINT assento_fk1 FOREIGN KEY (horario_id) REFERENCES horario(id);
 ALTER TABLE tripulante_horario ADD CONSTRAINT tripulante_horario_fk1 FOREIGN KEY (tripulante_utilizador_username) REFERENCES tripulante(utilizador_username);
 ALTER TABLE tripulante_horario ADD CONSTRAINT tripulante_horario_fk2 FOREIGN KEY (horario_id, horario_preco) REFERENCES horario(id, preco);
 ALTER TABLE tripulante_tripulante ADD CONSTRAINT tripulante_tripulante_fk1 FOREIGN KEY (tripulante_utilizador_username) REFERENCES tripulante(utilizador_username);
 ALTER TABLE tripulante_tripulante ADD CONSTRAINT tripulante_tripulante_fk2 FOREIGN KEY (tripulante_utilizador_username1) REFERENCES tripulante(utilizador_username);
+
+
 
 
 
@@ -235,23 +242,25 @@ CREATE OR REPLACE PROCEDURE addCrew( username utilizador.username%type,
     data_nascimento utilizador.data_nascimento%type,
     telefone    utilizador.telefone%type,
     email       utilizador.email%type,
-	funcao		tripulante.funcao%type,
-	tripulante_utilizador_username tripulante.tripulante_utilizador_username%type
+	funcao		tripulante.funcao%type
 	)
 LANGUAGE plpgsql
 AS $$
 BEGIN
 	call addUtilizador(username, password, nome, genero, data_nascimento, telefone, email);
-	INSERT INTO tripulante(utilizador_username, funcao, tripulante_utilizador_username)
-	VALUES (username, funcao, tripulante_utilizador_username);
+	INSERT INTO tripulante(utilizador_username, funcao)
+	VALUES (username, funcao);
 EXCEPTION
+    WHEN unique_violation THEN
+        RAISE EXCEPTION 'O username já existe.'
+
+    -- Quando a FK não é válida
     WHEN foreign_key_violation THEN
         RAISE EXCEPTION 'Erro: O username não existe na tabela utilizador.';
-    WHEN unique_violation THEN
-        RAISE EXCEPTION 'Erro: O tripulante já está registado.';
-    WHEN others THEN
-        RAISE EXCEPTION 'Erro inesperado: %', SQLERRM;
 
+    -- Qualquer outro erro
+    WHEN others THEN
+        RAISE EXCEPTION '%', SQLERRM;
 END;
 $$;
 
@@ -347,7 +356,7 @@ CREATE OR REPLACE PROCEDURE addHorario(
 	partida horario.partida%type,
 	chegada horario.chegada%type,
 	id horario.id%type,
-    preco horario.preco%type
+    preco horario.preco%type,
 	voo_id horario.voo_id%type,
 	administrador_utilizador_username horario.administrador_utilizador_username%type 
 )
@@ -419,9 +428,9 @@ CREATE OR REPLACE FUNCTION check_seat(
     voo_id_check voo.id%type,
     horario_id_check horario.id%type
 )
-RETURNS SETOF bilhete_assento.assento_id%type AS $$
+RETURNS INTEGER [] AS $$
 BEGIN
-    RETURN (
+    RETURN ARRAY (
         SELECT assento_id
         FROM bilhete_assento
         JOIN horario ON bilhete_assento.horario_id = horario.id
