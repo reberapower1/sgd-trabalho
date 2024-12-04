@@ -28,7 +28,6 @@ CREATE TABLE tripulante (
 
 CREATE TABLE administrador (
 	funcao				 VARCHAR(512) NOT NULL,
-	administrador_utilizador_username VARCHAR(512) NOT NULL,
 	utilizador_username		 VARCHAR(512) NOT NULL,
 	PRIMARY KEY(utilizador_username)
 );
@@ -132,9 +131,14 @@ CREATE TABLE tripulante_tripulante (
 	PRIMARY KEY(tripulante_utilizador_username)
 );
 
+CREATE TABLE administrador_administrador (
+	administrador_utilizador_username	 VARCHAR(512),
+	administrador_utilizador_username1 VARCHAR(512) NOT NULL,
+	PRIMARY KEY(administrador_utilizador_username)
+);
+
 ALTER TABLE cliente ADD CONSTRAINT cliente_fk1 FOREIGN KEY (utilizador_username) REFERENCES utilizador(username);
 ALTER TABLE tripulante ADD CONSTRAINT tripulante_fk1 FOREIGN KEY (utilizador_username) REFERENCES utilizador(username);
-ALTER TABLE administrador ADD CONSTRAINT administrador_fk1 FOREIGN KEY (administrador_utilizador_username) REFERENCES administrador(utilizador_username);
 ALTER TABLE administrador ADD CONSTRAINT administrador_fk2 FOREIGN KEY (utilizador_username) REFERENCES utilizador(username);
 ALTER TABLE compra ADD CONSTRAINT compra_fk1 FOREIGN KEY (horario_id) REFERENCES horario(id);
 ALTER TABLE compra ADD CONSTRAINT compra_fk2 FOREIGN KEY (cliente_utilizador_username) REFERENCES cliente(utilizador_username);
@@ -156,6 +160,8 @@ ALTER TABLE tripulante_horario ADD CONSTRAINT tripulante_horario_fk1 FOREIGN KEY
 ALTER TABLE tripulante_horario ADD CONSTRAINT tripulante_horario_fk2 FOREIGN KEY (horario_id) REFERENCES horario(id);
 ALTER TABLE tripulante_tripulante ADD CONSTRAINT tripulante_tripulante_fk1 FOREIGN KEY (tripulante_utilizador_username) REFERENCES tripulante(utilizador_username);
 ALTER TABLE tripulante_tripulante ADD CONSTRAINT tripulante_tripulante_fk2 FOREIGN KEY (tripulante_utilizador_username1) REFERENCES tripulante(utilizador_username);
+ALTER TABLE administrador_administrador ADD CONSTRAINT administrador_administrador_fk1 FOREIGN KEY (administrador_utilizador_username) REFERENCES administrador(utilizador_username);
+ALTER TABLE administrador_administrador ADD CONSTRAINT administrador_administrador_fk2 FOREIGN KEY (administrador_utilizador_username1) REFERENCES administrador(utilizador_username);
 
 CREATE OR REPLACE PROCEDURE addUtilizador(
     username     utilizador.username%type,
@@ -204,7 +210,7 @@ EXCEPTION
 END;
 $$;
 
-CREATE OR REPLACE PROCEDURE addAdmin( username utilizador.username%type,
+CREATE OR REPLACE PROCEDURE addAdmin(username utilizador.username%type,
     password  utilizador.password%type,
     nome        utilizador.nome%type,
     genero      utilizador.genero%type,
@@ -212,14 +218,19 @@ CREATE OR REPLACE PROCEDURE addAdmin( username utilizador.username%type,
     telefone    utilizador.telefone%type,
     email       utilizador.email%type,
 	funcao		administrador.funcao%type,
-	administrador_utilizador_username administrador.administrador_utilizador_username%type
+	administrador_utilizador_username administrador_administrador.administrador_utilizador_username%type
 	)
 LANGUAGE plpgsql
 AS $$
 BEGIN
+    -- adicionar na tabela do utilizador
 	call addUtilizador(username, password, nome, genero, data_nascimento, telefone, email);
-	INSERT INTO administrador(utilizador_username, funcao, administrador_utilizador_username)
-	VALUES (username, funcao, administrador_utilizador_username);
+    -- adicionar na do administrador
+	INSERT INTO administrador(utilizador_username, funcao)
+	VALUES (username, funcao);
+    --adicionar na dos chefes/subordinados
+    INSERT INTO administrador_administrador(administrador_utilizador_username, administrador_utilizador_username1 )
+    VALUES (administrador_utilizador_username, username)
 EXCEPTION
     WHEN foreign_key_violation THEN
         RAISE EXCEPTION 'Erro: O username não existe na tabela utilizador.';
@@ -227,7 +238,6 @@ EXCEPTION
         RAISE EXCEPTION 'Erro: O administrador já está registado.';
     WHEN others THEN
         RAISE EXCEPTION 'Erro inesperado: %', SQLERRM;
-
 END;
 $$;
 
@@ -457,17 +467,19 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE PROCEDURE addCompra(
-    horario_check INTEGER,
-    cliente_username VARCHAR(512),
-    assentos_array VARCHAR(512)[]
+    horario_check horario.id%type,
+    cliente_username utilizador.username%type,
+    assentos_array VARCHAR[][]
 )
 LANGUAGE plpgsql AS $$
 DECLARE
     preco_horario horario.preco%type;
     total_preco horario.preco%type;
-    assento_id assento.id%type;
     compra_id compra.id%type;
     disponibilidade assento.disponibilidade%type;
+    nome_bilhete bilhete.nome%type;
+    id_passageiro bilhete.id%type;
+    assento_id assento.id%type;
 BEGIN
     -- Verificar o preço do horário
     SELECT preco INTO preco_horario
@@ -478,36 +490,39 @@ BEGIN
         RAISE EXCEPTION 'Horário % não encontrado.', horario_check;
     END IF;
 
-    -- Percorrer todos os assentos para verificar disponibilidade
-    FOREACH assento_id IN ARRAY assentos_array LOOP
+    -- Calcular o preço total da compra
+    total_preco := array_length(assentos_array, 1) * preco_horario;
+
+    -- Inserir os dados da compra na tabela compra
+    INSERT INTO compra (data, valor, horario_id, cliente_utilizador_username)
+    VALUES (NOW(), total_preco, horario_check, cliente_username)
+    RETURNING id INTO compra_id;
+
+    -- Iterar pelo array 
+    FOR i IN 1..array_length(assentos_array, 1) LOOP
+        -- ietrar por cada array, dentro do array
+        nome_bilhete := assentos_array[i][1];
+        id_passageiro := assentos_array[i][2]::INT;
+        assento_id := assentos_array[i][3];
+
+        -- Verificar a disponibilidade do assento
         disponibilidade := verificar_disponibilidade_assento(assento_id, horario_check);
 
         IF NOT disponibilidade THEN
             RAISE EXCEPTION 'Assento % não está disponível.', assento_id;
         END IF;
-    END LOOP;
 
-    -- Calcular o preço total
-    total_preco := array_length(assentos_array, 1) * preco_horario;
-
-    -- Inserir na tabela compra
-    INSERT INTO compra (data, valor, horario_id, cliente_utilizador_username)
-    VALUES (NOW(), total_preco, horario_check, cliente_username)
-    RETURNING id INTO compra_id;
-
-    RAISE NOTICE 'Compra % sucedida', compra_id;
-
-    -- Atualizar a disponibilidade dos assentos para false
-    FOREACH assento_id IN ARRAY assentos_input LOOP
+        -- Atualizar a disponibilidade dos assentos comprados
         UPDATE assento
         SET disponibilidade = false
         WHERE assento.id = assento_id AND horario_id = horario_check;
-    END LOOP;
 
-    RAISE NOTICE 'Disponibilidade dos assentos atualizada.';
+        -- Inserir os dados dos passageiros e compra na tabela bilhete
+        INSERT INTO bilhete (nome, id, compra_id, assento_id, assento_horario_id)
+        VALUES (nome_bilhete, id_passageiro, compra_id, assento_id, horario_check);
+    END LOOP;
 END;
 $$;
-
 
 
 CREATE OR REPLACE FUNCTION top_destinations(n INTEGER)

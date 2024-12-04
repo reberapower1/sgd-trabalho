@@ -739,7 +739,7 @@ def compra():
         }
         return jsonify(response)
     
-    keysNeededBook = ['horario_id', 'seats']
+    keysNeededBook =  ['horario_id', 'seats']
     for key in keysNeededBook:
         if key not in payload:
             response = {
@@ -747,7 +747,7 @@ def compra():
                 'message': f'{key} value not in payload'
             }
             return jsonify(response)
-        
+
     statement = 'call addCompra( %s, %s, %s)'
     values = (payload['horario_id'], admin_username(payload['token']), payload['seats'])
     try:
