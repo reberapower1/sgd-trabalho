@@ -751,11 +751,7 @@ def compra():
     statement = 'call addCompra( %s, %s, %s)'
     values = (payload['horario_id'], admin_username(payload['token']), payload['seats'])
     try:
-        # Conectar ao banco de dados
-        conn = db_connection()
-        cur = conn.cursor()
-
-        # Configurar o nível de isolamento de transação para SERIALIZABLE
+        # Definir o nível de isolamento de transação para SERIALIZABLE
         conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
 
         cur.execute(statement, values)
@@ -820,9 +816,7 @@ def n_destinos(n):
         #Preencher os dados na tabela horário
         cur.execute(statement, values)
         tabela = cur.fetchall()  
-        results = [
-            {"aeroporto de destino": linha[0], "número de voos": linha[1]} for linha in tabela
-        ]
+        results = [{"aeroporto de destino": linha[0], "número de voos": linha[1]} for linha in tabela]
 
         # Retornar a resposta com os dados
         result = {
@@ -844,11 +838,13 @@ def n_destinos(n):
     return jsonify(result)
 
 @app.route('/sgdproj/report/topRoutes/<int:n>', methods=['GET'])
-def top_routes(n):
+def top_rotas(n):
     logger.info('GET /sgdproj/report/topRoutes/<int:n>')
     logger.info("---- Top routes ----")
 
     payload = request.get_json()
+
+    logger.debug(f'payload: {payload}')
 
     # Verificar se o token existe no payload
     if 'token' not in payload:
@@ -867,40 +863,23 @@ def top_routes(n):
     # Verificar token
     if not verify_auth_token(conn, token):
         response = {
-            'status': 401,
+            'status': 400,
             'message': 'Token inválido'
         }
         return jsonify(response)
 
-    statement = 'SELECT * FROM get_top_routes_last_12_months(%s);'
-    values = (n,)
+    statement = 'SELECT * FROM top_rotas(%s);'
+    values = ((n,))
 
     try:
         cur.execute(statement, values)
-        rows = cur.fetchall()
+        tabela = cur.fetchall()
 
-        # Estrutura para armazenar os resultados agrupados por mês
-        results = {}
-        for row in rows:
-            month = row[0]
-            flight_id = row[1]
-            total_passengers = row[2]
-
-            if month not in results:
-                results[month] = []
-            results[month].append({
-                "flight_id": flight_id,
-                "total_passengers": total_passengers
-            })
-
-        # Formatar a resposta para a API
-        formatted_results = [
-            {"month": month, "topN": flights} for month, flights in sorted(results.items())
-        ]
+        results = [{"mês": linha[0], "TopN": [{"id_voo": r[0], "total_passageiros": r[1]} for r in linha[1]]} for linha in tabela]
 
         result = {
             'status': 200,
-            'results': formatted_results
+            'results': results
         }
 
     except (Exception, psycopg2.DatabaseError) as error:

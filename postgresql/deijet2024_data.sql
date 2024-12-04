@@ -552,76 +552,41 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION top_routes_per_month(n INTEGER)
+CREATE OR REPLACE FUNCTION top_rotas(n INTEGER)
 RETURNS TABLE (
-    month TEXT,
-    topN JSONB
-)
+    mes INTEGER,
+    rotas INTEGER[]
+) 
 LANGUAGE plpgsql
 AS $$
-DECLARE
-    month_record RECORD;
 BEGIN
-    -- Utiliza um loop para iterar sobre cada mês dos últimos 12 meses
-    FOR month_record IN
-        SELECT TO_CHAR(h.partida, 'Month_YYYY') AS month
-        FROM horario h
-        WHERE h.partida >= CURRENT_DATE - INTERVAL '12 months'
-        GROUP BY month
-        ORDER BY month DESC
-    LOOP
-        RETURN QUERY
-        SELECT
-            month_record.month AS month,
-            JSONB_AGG(
-                JSONB_BUILD_OBJECT(
-                    'flight_id', v.id,
-                    'total_passengers', COUNT(b.id)
-                )
-            ) AS topN
-        FROM
-            bilhete_assento b
-        JOIN
-            horario h ON b.horario_id = h.id
-        JOIN
-            voo v ON h.voo_id = v.id
-        WHERE
-            b.assento_disponibilidade = FALSE
-            AND TO_CHAR(h.partida, 'Month_YYYY') = month_record.month
-        GROUP BY
-            v.id, month_record.month
-        ORDER BY
-            COUNT(b.id) DESC
-        LIMIT n;
-    END LOOP;
+    RETURN QUERY
+    SELECT 
+        EXTRACT(MONTH FROM h.partida)::INTEGER AS mes,
+        ARRAY(
+            SELECT 
+                ARRAY[voo.id, COUNT(bilhete.id)]::INTEGER[]
+            FROM 
+                bilhete 
+            JOIN 
+                horario h2 ON bilhete.assento_horario_id = h2.id
+            JOIN 
+                voo ON h2.voo_id = voo.id
+            WHERE 
+                DATE_TRUNC('month', h2.partida) = DATE_TRUNC('month', h.partida)
+            GROUP BY 
+                voo.id
+            ORDER BY 
+                COUNT(bilhete.id) DESC
+            LIMIT n
+        ) AS rotas
+    FROM 
+        horario h
+    WHERE 
+        h.partida >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '12 months'
+    GROUP BY 
+        mes
+    ORDER BY 
+        mes, h.partida
 END;
-$$;
-
-CREATE OR REPLACE FUNCTION get_top_routes_last_12_months(n INTEGER)
-RETURNS TABLE (
-    month TEXT,
-    flight_id INTEGER,
-    total_passengers INTEGER
-)
-LANGUAGE sql
-AS $$
-SELECT
-    TO_CHAR(horario.partida, 'Month_YYYY') AS month,
-    voo.id AS flight_id,
-    COUNT(bilhete_assento.id) AS total_passengers
-FROM
-    bilhete_assento
-JOIN
-    horario ON bilhete_assento.horario_id = horario.id
-JOIN
-    voo ON horario.voo_id = voo.id
-WHERE
-    bilhete_assento.assento_disponibilidade = FALSE
-    AND horario.partida >= CURRENT_DATE - INTERVAL '12 months'
-GROUP BY
-    TO_CHAR(horario.partida, 'Month_YYYY'), voo.id
-ORDER BY
-    month,
-    total_passengers DESC
-LIMIT n;
 $$;
