@@ -786,9 +786,10 @@ def compra():
 def n_destinos(n):
     logger.info('GET /sgdproj/report/topDestinations/<int:n>');   
     logger.info("---- Top destinos  ----")
-    logger.debug(f'payload: {payload}')
-    
+
     payload = request.get_json()
+    
+    logger.debug(f'payload: {payload}')
     
     # Verificar se o token existe no payload
     if 'token' not in payload:
@@ -812,15 +813,15 @@ def n_destinos(n):
         }
         return jsonify(response)
        
-    statement = ' SELECT * from top_destinations (%s)'
+    statement = ' SELECT * from top_destinos (%s)'
     values = ((n,))
 
     try:
         #Preencher os dados na tabela horário
         cur.execute(statement, values)
-        valores = cur.fetchall()  
+        tabela = cur.fetchall()  
         results = [
-            {"destination_airport": row[0], "number_flights": row[1]} for row in results
+            {"aeroporto de destino": linha[0], "número de voos": linha[1]} for linha in tabela
         ]
 
         # Retornar a resposta com os dados

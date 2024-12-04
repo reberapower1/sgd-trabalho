@@ -108,7 +108,7 @@ CREATE TABLE bilhete (
 	compra_id		 BIGINT,
 	assento_id	 VARCHAR(512) NOT NULL,
 	assento_horario_id INTEGER NOT NULL,
-	PRIMARY KEY(compra_id)
+	PRIMARY KEY(id,compra_id)
 );
 
 CREATE TABLE assento (
@@ -525,18 +525,18 @@ END;
 $$;
 
 
-CREATE OR REPLACE FUNCTION top_destinations(n INTEGER)
+CREATE OR REPLACE FUNCTION top_destinos(n INTEGER)
 RETURNS TABLE (
-    destination_airport aeroporto.id%type,
-    number_flights INTEGER
+    aeroporto_destino aeroporto.id%type,
+    n_voos BIGINT
 ) 
 LANGUAGE plpgsql
 AS $$
 BEGIN
     RETURN QUERY
     SELECT 
-        voo.aeroporto_destino AS destination_airport,
-        COUNT(horario.id) AS number_flights
+        voo.aeroporto_destino AS aeroporto_destino,
+        COUNT(horario.id) AS n_voos
     FROM 
         voo
     JOIN 
@@ -546,7 +546,7 @@ BEGIN
     GROUP BY 
         voo.aeroporto_destino
     ORDER BY 
-        number_flights DESC
+        n_voos DESC
     LIMIT 
         n;
 END;
