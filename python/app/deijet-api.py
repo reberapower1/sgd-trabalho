@@ -63,20 +63,21 @@ def db_connection():
         print(f"Erro ao conectar à base de dados: {e}")
         raise
 
-# Função que verifica a password do utilizador
-def verify_password(db_hash, provided_hash):
-    provided_hash = hashlib.sha256(provided_hash.encode()).hexdigest()
-    return db_hash == provided_hash
-
 # Função que verifica chaves do payload
 def verify_payload_keys(payload, keysNeeded):
     for key in keysNeeded:
         if key not in payload :
             response = {
                 'status': StatusCodes ['api_error'],
-                'message': f'{key} key not in client payload' 
+                'message': f'{key} key not in payload' 
             }
-            return jsonify(response)
+            return response
+    return None
+
+# Função que encripta a password
+def encrypt_password(password):
+    return hashlib.sha256(password.encode()).hexdigest()
+
 
 # Route da root
 @app.route('/')
@@ -102,17 +103,12 @@ def register_client():
     logger.debug(f'payload: {payload}')
 
     keysNeededClient = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email']
-    # Verificar chaves do payload
-    for key in keysNeededClient:
-        if key not in payload :
-            response = {
-                'status': StatusCodes ['api_error'],
-                'message': f'{key} key not in client payload' 
-            }
-            return jsonify(response)
+    response = verify_payload_keys(payload, keysNeededClient)
+    if response :
+        return jsonify(response)
     
     # Encriptar a password 
-    payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
+    payload['password'] = encrypt_password(payload['password'])
     
     statement = 'call addClient(%s, %s, %s, %s, %s, %s, %s)'
     values = (payload['username'], payload['password'], payload['nome'], payload['genero'], payload['data_nascimento'], payload['telefone'], payload['email'])
@@ -149,14 +145,14 @@ def register_admin():
     logger.info('POST /sgdproj/register/admin');   
     payload = request.get_json()
 
-    # Verificar se o token do admin existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe'
-        }
+    # Verificar chaves do payload
+    keysNeededAdmin = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email', 'funcao', 'token']
+    response = verify_payload_keys(payload, keysNeededAdmin)
+    if response:
         return jsonify(response)
-   
+    
+    admin_token= payload['token']
+
     conn = db_connection()
     # Definir o nível de isolamento da transação
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
@@ -164,8 +160,6 @@ def register_admin():
 
     logger.info("---- Novo  Admin  ----")
     logger.debug(f'payload: {payload}')
-
-    admin_token = payload['token']
 
     # Verificar o admin token
     if not verify_admin_token(conn, admin_token):
@@ -175,32 +169,21 @@ def register_admin():
         }
         return jsonify(response)
     
-    # # Verificar chaves do payload
-    keysNeededAdmin = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email', 'funcao']
-    for key in keysNeededAdmin:
-        if key not in payload :
-            response = {
-                'status': StatusCodes ['api_error'],
-                'message': f'{key} key not in admin payload' 
-            }
-            return jsonify(response)
-    
-    # Encriptar pass
-    payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
+    # Encriptar a password
+    payload['password'] = encrypt_password(payload['password'])
     
     statement = 'call addAdmin(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
-    values = (payload['username'], payload['password'], payload['nome'], payload['genero'], payload['data_nascimento'], payload['telefone'], payload['email'], payload['funcao'], admin_username(admin_token))
+    values = (payload['username'], payload['password'], payload['nome'], payload['genero'], payload['data_nascimento'], payload['telefone'], payload['email'], payload['funcao'], get_username(admin_token))
     
     try:
-        #Preencher os dados no utilizador e cliente
+        #Preencher os dados na tabela do utilizador e cliente
         cur.execute(statement, values)
-        # Commitar as transações
+        # Confirmar as transações
         conn.commit()
         result = {
             'status': StatusCodes['success'],
             'message': 'Administrador registado com sucesso',
-            'user': payload['username'],
-            'token': generate_token(payload['username'], 'admin')
+            'user': payload['username']
         }
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
@@ -217,7 +200,7 @@ def register_admin():
     
     return jsonify(result) 
 
-# REGISTAR O TRIPULANTE
+# Route para registar o tripulante
 @app.route('/sgdproj/register/crew', methods = ['POST'])
 def register_crew():
     logger.info('POST /sgdproj/register/crew');   
@@ -229,25 +212,21 @@ def register_crew():
 
     logger.info("---- Novo tripulante  ----")
     logger.debug(f'payload: {payload}')
-    # Check payload keys
+    #Verificar payload
     keysNeededCrew = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email', 'funcao']
-    for key in keysNeededCrew:
-        if key not in payload :
-            response = {
-                'status': StatusCodes ['api_error'],
-                'message': f'{key} key not in crew payload' 
-            }
-            return jsonify(response)
+    response = verify_payload_keys (payload, keysNeededCrew)
+    if response :
+        return jsonify(response)
         
-    # Encrypt password
-    payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
+    # Encriptar a password
+    payload['password'] = encrypt_password(payload['password'])
     statement = 'call addCrew(%s, %s, %s, %s, %s, %s, %s, %s)'
     values = (payload['username'], payload['password'], payload['nome'], payload['genero'], payload['data_nascimento'], payload['telefone'], payload['email'], payload['funcao'])
     
     try:
-        #Preencher os dados no utilizador e tripulante
+        #Preencher os dados na tabela do utilizador e tripulante
         cur.execute(statement, values)
-        # Commitar as transações
+        # Confirmar as transações
         conn.commit()
         result = {
             'status': StatusCodes['success'],
@@ -268,25 +247,22 @@ def register_crew():
             conn.close()
     return jsonify(result)
 
-# Login Route
+# Route para fazer login
 @app.route('/sgdproj/login', methods = ['PUT'])
 def login():
     logger.info('PUT /sgdproj/login')
     logger.info("---- Login  ----")
     payload = request.get_json()
+    
     keysNeededLogin = ['username', 'password']
-    for key in keysNeededLogin:
-        if key not in payload:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'{key} value not in payload'
-            }
-            return jsonify(response)
-        
+    response = verify_payload_keys (payload, keysNeededLogin)
+    if response :
+        return jsonify(response)  
+    
     conn = db_connection()
     cursor = conn.cursor()
 
-    payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
+    payload['password'] = encrypt_password(payload['password'])
 
     statement = 'SELECT login(%s, %s)'
     values = (payload['username'], payload['password'])
@@ -315,7 +291,7 @@ def login():
         
         response = {
             'status': StatusCodes['success'],
-            'message': 'Login successful',
+            'message': 'Login sucedido',
             'token': token
         }
     
@@ -325,10 +301,10 @@ def login():
             conn.close()
     return jsonify(response)
     
-# Secret JWT Token
+# Chave secreta para encrpitar o token (jwt)
 secret_key = os.getenv("secret_key")
 
-# Generate Auth Token
+# Gerar Token
 def generate_token(username, role):
     payload = {
         "username": username,
@@ -337,6 +313,7 @@ def generate_token(username, role):
     token = jwt.encode(payload, secret_key, algorithm="HS256")
     return token
 
+#Função para verificar o token do admin
 def verify_admin_token(conn, token):
     decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
     username = decoded_token.get("username")
@@ -360,12 +337,13 @@ def verify_admin_token(conn, token):
     else:
         return False
 
+#Função para verificar o token de autenticação
 def verify_auth_token(conn, token):
     decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
     username = decoded_token.get("username")
     role = decoded_token.get("role")
     if role != 'user' or role != 'admin':
-        return False, {"message": "Not an valid user"}
+        return False, {"message": "User inválido"}
     
     with conn.cursor() as cur:
         query = """
@@ -382,13 +360,15 @@ def verify_auth_token(conn, token):
     else:
         return False
     
-def admin_username(token):
-    # Decode token
+#Função que retorna o username associado a certo token
+def get_username(token):
+    # Descodificar o token
     decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
-    # Extract data from token
-    username_criador = decoded_token.get("username")
-    return username_criador
+    #Obter o username do utilizador
+    username = decoded_token.get("username")
+    return username
 
+#Route para registar um aeroporto
 @app.route('/sgdproj/airport', methods = ['POST'])
 def cria_aeroporto():
     logger.info('POST /sgdproj/airport');   
@@ -396,20 +376,17 @@ def cria_aeroporto():
     payload = request.get_json()
     logger.debug(f'payload: {payload}')
     
-    # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe'
-        }
-        return jsonify(response)
-   
+    #Verificar o payload
+    keysNeededAirport = ['nome', 'cidade', 'pais', 'id', 'token']
+    response = verify_payload_keys(payload, keysNeededAirport)
+    if response:
+            return jsonify(response)
+    
+    admin_token = payload['token']
+    
     conn = db_connection()
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
-    
-    # Admin token
-    admin_token = payload['token']
 
     # Verify admin token
     if not verify_admin_token(conn, admin_token):
@@ -419,22 +396,13 @@ def cria_aeroporto():
         }
         return jsonify(response)
     
-    keysNeededAirport = ['nome', 'cidade', 'pais', 'id']
-    for key in keysNeededAirport:
-        if key not in payload:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'{key} value not in payload'
-            }
-            return jsonify(response)
-        
     statement = 'call addAeroporto (%s,%s,%s,%s,%s)'
-    values = (payload['nome'], payload['cidade'], payload['pais'], payload['id'], admin_username(admin_token))
+    values = (payload['nome'], payload['cidade'], payload['pais'], payload['id'], get_username(admin_token))
 
     try:
         #Preencher os dados na tabela aeroporto
         cur.execute(statement, values)
-        # Commitar as transações
+        # Confirmar as transações
         conn.commit()
         result = {
             'status': StatusCodes['success'],
@@ -456,6 +424,7 @@ def cria_aeroporto():
     
     return jsonify(result)
 
+#Route para registar um voo
 @app.route('/sgdproj/flight', methods = ['POST'])
 def cria_voo():
     logger.info('POST /sgdproj/flight');   
@@ -465,19 +434,16 @@ def cria_voo():
 
     logger.debug(f'payload: {payload}')
     
-    # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe'
-        }
+    # Verificar o payload
+    keysNeededFlight = ['capacidade', 'id', 'aeroporto_origem', 'aeroporto_destino', 'token']
+    response = verify_payload_keys(payload, keysNeededFlight)
+    if response:
         return jsonify(response)
-   
+    
     conn = db_connection()
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
     
-    # Admin token
     admin_token = payload['token']
 
     # Verificar admin token
@@ -488,17 +454,8 @@ def cria_voo():
         }
         return jsonify(response)
     
-    keysNeededFlight = ['capacidade', 'id', 'aeroporto_origem', 'aeroporto_destino']
-    for key in keysNeededFlight:
-        if key not in payload:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'{key} value not in payload'
-            }
-            return jsonify(response)
-    
     statement = ' call addVoo (%s, %s, %s, %s, %s)'
-    values = (payload['capacidade'], payload['id'], admin_username(admin_token), payload['aeroporto_origem'], payload['aeroporto_destino'])
+    values = (payload['capacidade'], payload['id'], get_username(admin_token), payload['aeroporto_origem'], payload['aeroporto_destino'])
 
     try:
         #Preencher os dados na tabela voo
@@ -525,6 +482,7 @@ def cria_voo():
     
     return jsonify(result)
         
+#Route para registar um horário de um voo
 @app.route('/sgdproj/schedule', methods = ['POST'])
 def cria_horario():
     logger.info('POST /sgdproj/schedule');   
@@ -533,23 +491,19 @@ def cria_horario():
     payload = request.get_json()
 
     logger.debug(f'payload: {payload}')
-    
-    # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe'
-        }
+
+    keysNeededSchedule = ['partida' ,'chegada','id','preco','voo_id', 'token']
+    response=verify_payload_keys(payload, keysNeededSchedule)
+    if response:
         return jsonify(response)
-   
+    
     conn = db_connection()
     conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
     
-    # Admin token
     admin_token = payload['token']
 
-    # Verify admin token
+    # Verificar admin token
     if not verify_admin_token(conn, admin_token):
         response = {
             'status': StatusCodes['invalid_token'],
@@ -557,22 +511,13 @@ def cria_horario():
         }
         return jsonify(response)
     
-    keysNeededSchedule = ['partida' ,'chegada','id','preco','voo_id']
-    for key in keysNeededSchedule:
-        if key not in payload:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'{key} value not in payload'
-            }
-            return jsonify(response)
-    
     statement = ' call addhorario (%s,%s,%s,%s,%s, %s)'
-    values = (payload['partida'], payload['chegada'], payload['id'],payload['preco'] ,payload['voo_id'], admin_username(admin_token))
+    values = (payload['partida'], payload['chegada'], payload['id'],payload['preco'] ,payload['voo_id'], get_username(admin_token))
 
     try:
         #Preencher os dados na tabela horário
         cur.execute(statement, values)
-        # Commitar as transações
+        # Confirmae as transações
         conn.commit()
         result = {
             'status': StatusCodes['success'],
@@ -593,7 +538,7 @@ def cria_horario():
             conn.close()
     
     return jsonify(result)
-
+#Route para ver quais os horários de um voo
 @app.route('/sgdproj/check_routes', methods = ['GET'])
 def checkar_rotas():
     logger.info('GET /sgdproj/check_routes');   
@@ -603,18 +548,12 @@ def checkar_rotas():
 
     logger.debug(f'payload: {payload}')
     
-    # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe'
-        }
-        return jsonify(response)
-   
+    keysNeededRoutes = ['aeroporto_origem','aeroporto_destino', 'token']
+    response= verify_payload_keys(payload, keysNeededRoutes)
+
     conn = db_connection()
     cur = conn.cursor()
     
-    # token
     token = payload['token']
 
     # Verificar token
@@ -624,15 +563,6 @@ def checkar_rotas():
             'message': 'Token inválido'
         }
         return jsonify(response)
-    
-    keysNeededSchedule = ['aeroporto_origem','aeroporto_destino']
-    for key in keysNeededSchedule:
-        if key not in payload:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'{key} value not in payload'
-            }
-            return jsonify(response)
        
     statement = ' SELECT * from check_rotas (%s,%s)'
     values = (payload['aeroporto_origem'], payload['aeroporto_destino'])
@@ -643,9 +573,7 @@ def checkar_rotas():
 
         # Obter os resultados
         linhas = cur.fetchall()
-        colunas = [desc[0] for desc in cur.description]  # Obter os nomes das colunas
-
-        # Formatando os resultados em um dicionário
+        colunas = [desc[0] for desc in cur.description]  
         informacao = [dict(zip(colunas, linha)) for linha in linhas]
 
         # Retornar a resposta com os dados
@@ -668,6 +596,7 @@ def checkar_rotas():
     
     return jsonify(result)
 
+# Route para verificar os lugares disponíveis num voo
 @app.route('/sgdproj/check_seats', methods = ['GET'])
 def checkar_lugar():
     logger.info('GET /sgdproj/check_seats  ');   
@@ -676,19 +605,15 @@ def checkar_lugar():
     payload = request.get_json()
     
     logger.debug(f'payload: {payload}')
-    
-    # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe'
-        }
+
+    keysNeededSeats = ['voo_id','horario_id','token']
+    response = verify_payload_keys(payload, keysNeededSeats)
+    if response:
         return jsonify(response)
-   
+
     conn = db_connection()
     cur = conn.cursor()
     
-    # token
     token = payload['token']
 
     # Verificar token
@@ -699,20 +624,10 @@ def checkar_lugar():
         }
         return jsonify(response)
     
-    keysNeededSchedule = ['voo_id','horario_id']
-    for key in keysNeededSchedule:
-        if key not in payload:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'{key} value not in payload'
-            }
-            return jsonify(response)
-       
     statement = ' SELECT * from check_seat (%s,%s)'
     values = (payload['voo_id'], payload['horario_id'])
 
     try:
-        #Preencher os dados na tabela horário
         cur.execute(statement, values)
         informacao = cur.fetchone()[0]  
 
@@ -736,23 +651,22 @@ def checkar_lugar():
     
     return jsonify(result)
 
+#Route para reservar um voo
 @app.route('/sgdproj/book_flight', methods=['POST'])
 def compra():
     logger.info('POST /sgdproj/book_flight')
     logger.info("---- Reservar um voo ----")
 
     payload = request.get_json()
+    
     logger.debug(f'payload: {payload}')
 
-    # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe'
-        }
+    # Verificar o payload
+    keysNeededBook =  ['horario_id', 'seats','token']
+    response = verify_payload_keys(payload, keysNeededBook)
+    if response:
         return jsonify(response)
     
-    # token
     token = payload['token']
 
     conn = db_connection()
@@ -767,17 +681,11 @@ def compra():
         }
         return jsonify(response)
     
-    keysNeededBook =  ['horario_id', 'seats']
-    for key in keysNeededBook:
-        if key not in payload:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'{key} value not in payload'
-            }
-            return jsonify(response)
+    keysNeededBook =  ['horario_id', 'seats','token']
 
     statement = 'call addCompra( %s, %s, %s)'
-    values = (payload['horario_id'], admin_username(payload['token']), payload['seats'])
+    values = (payload['horario_id'], get_username(payload['token']), payload['seats'])
+    
     try:
         cur.execute(statement, values)
 
@@ -804,6 +712,7 @@ def compra():
 
     return jsonify(response)
 
+# Route para obter os n destinos com mais voos no último ano
 @app.route('/sgdproj/report/topDestinations/<int:n>', methods = ['GET'])
 def n_destinos(n):
     logger.info('GET /sgdproj/report/topDestinations/<int:n>');   
@@ -814,17 +723,14 @@ def n_destinos(n):
     logger.debug(f'payload: {payload}')
     
     # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe'
-        }
+    keyNeeded = ['token']
+    response = verify_payload_keys(payload, keyNeeded)
+    if response:
         return jsonify(response)
    
     conn = db_connection()
     cur = conn.cursor()
     
-    # token
     token = payload['token']
 
     # Verificar token
@@ -839,7 +745,6 @@ def n_destinos(n):
     values = ((n,))
 
     try:
-        #Preencher os dados na tabela horário
         cur.execute(statement, values)
         tabela = cur.fetchall()  
         results = [{"aeroporto de destino": linha[0], "número de voos": linha[1]} for linha in tabela]
@@ -873,18 +778,14 @@ def top_rotas(n):
 
     logger.debug(f'payload: {payload}')
 
-    # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': 400,
-            'message': 'Token não existe'
-        }
+    keyNeeded = ['token']
+    response = verify_payload_keys(payload, keyNeeded)
+    if response:
         return jsonify(response)
 
     conn = db_connection()
     cur = conn.cursor()
 
-    # token
     token = payload['token']
 
     # Verificar token
@@ -929,7 +830,6 @@ if __name__ == '__main__':
     # Caminho do diretório para os logs
     log_dir = "logs"
     log_file = os.path.join(log_dir, "log_file.log")
-    # Verifique se o diretório existe, caso contrário, crie-o
     if not os.path.exists(log_dir):
         os.makedirs(log_dir)
     logging.basicConfig(filename=log_file, level=logging.INFO)
@@ -952,7 +852,4 @@ if __name__ == '__main__':
     logger.info("\n---------------------------------------------------------------\n" + 
                   "API v1.0 online: http://127.0.0.1:5000\n\n")
 
-
-    
-    # NOTE: change to 5000 or remove the port parameter if you are running as a Docker container
     app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)

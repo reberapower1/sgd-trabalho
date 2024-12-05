@@ -228,9 +228,9 @@ BEGIN
     -- adicionar na do administrador
 	INSERT INTO administrador(utilizador_username, funcao)
 	VALUES (username, funcao);
-    --adicionar na dos chefes/subordinados
+    --adicionar na dos criadores/criados por
     INSERT INTO administrador_administrador(administrador_utilizador_username, administrador_utilizador_username1 )
-    VALUES (administrador_utilizador_username, username)
+    VALUES (username, administrador_utilizador_username)
 EXCEPTION
     WHEN foreign_key_violation THEN
         RAISE EXCEPTION 'Erro: O username não existe na tabela utilizador.';
@@ -590,3 +590,9 @@ BEGIN
         mes, h.partida
 END;
 $$;
+
+INSERT INTO assento (id, localizacao, disponibilidade, horario_id)
+VALUES
+    ('A3', TRUE, TRUE, 0),
+    ('A4', FALSE, TRUE, 0),
+    ('A5', TRUE, FALSE, 0);
