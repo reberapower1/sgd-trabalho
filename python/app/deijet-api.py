@@ -6,11 +6,11 @@
 ## ============ Trabalho Prático ===============
 ## =============================================
 ## =============================================
-## === Department of Informatics Engineering ===
+## === DEpartamento de Engenharia Informática ===
 ## =========== University of Coimbra ===========
 ## =============================================
 ##
-## Authors: Divah
+## Authors: Diana Martins
 ##   
 
 
@@ -52,7 +52,6 @@ StatusCodes = {
 
 def db_connection():
     try:
-        # NOTE: change the host to "db" if you are running as a Docker container
         db = psycopg2.connect(user = "postgres",
                               password = "batata",
                               host = "localhost", #"db",
@@ -64,28 +63,46 @@ def db_connection():
         print(f"Erro ao conectar à base de dados: {e}")
         raise
 
-# Function that verify user password
+# Função que verifica a password do utilizador
 def verify_password(db_hash, provided_hash):
     provided_hash = hashlib.sha256(provided_hash.encode()).hexdigest()
-    # Compare hashes
     return db_hash == provided_hash
 
-#fazer uma para o início
+# Função que verifica chaves do payload
+def verify_payload_keys(payload, keysNeeded):
+    for key in keysNeeded:
+        if key not in payload :
+            response = {
+                'status': StatusCodes ['api_error'],
+                'message': f'{key} key not in client payload' 
+            }
+            return jsonify(response)
 
-#ESTE É O DO CLIENTE
+# Route da root
+@app.route('/')
+def root():
+    return """
+    <h1 style="color:DeepPink;"> DEIJET REST-API &#128747; </h1>
+    <h2 style="color:Sienna"> Check out documentation for instructions on how to use the endpoints </p> 
+    <h2 style="color:Sienna"> Developed by &#127872; Diana Martins &#127872; </p>
+    """
+
+# Route para registar o cliente
 @app.route('/sgdproj/register/client', methods = ['POST'])
 def register_client():
     logger.info('POST /sgdproj/register/user');   
     payload = request.get_json()
    
     conn = db_connection()
+    # Definir o nível de isolamento da transação que envolve a compra
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
 
     logger.info("---- Novo cliente  ----")
     logger.debug(f'payload: {payload}')
 
-    # Check payload keys
     keysNeededClient = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email']
+    # Verificar chaves do payload
     for key in keysNeededClient:
         if key not in payload :
             response = {
@@ -94,16 +111,16 @@ def register_client():
             }
             return jsonify(response)
     
-    # Encrypt password
+    # Encriptar a password 
     payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
     
     statement = 'call addClient(%s, %s, %s, %s, %s, %s, %s)'
     values = (payload['username'], payload['password'], payload['nome'], payload['genero'], payload['data_nascimento'], payload['telefone'], payload['email'])
     
     try:
-        #Preencher os dados no utilizador e cliente
+        #Preencher os dados nas tabelas "utilizador" e "cliente"
         cur.execute(statement, values)
-        # Commitar as transações
+        # Confirmar a transação
         conn.commit()
 
         result = {
@@ -126,13 +143,13 @@ def register_client():
 
     return jsonify(result)
 
-# REGISTAR O  Admin
+# Route para registar o administrador
 @app.route('/sgdproj/register/admin', methods = ['POST'])
 def register_admin():
     logger.info('POST /sgdproj/register/admin');   
     payload = request.get_json()
 
-    # Verificar se o token existe no payload
+    # Verificar se o token do admin existe no payload
     if 'token' not in payload:
         response = {
             'status': StatusCodes['api_error'],
@@ -141,16 +158,16 @@ def register_admin():
         return jsonify(response)
    
     conn = db_connection()
+    # Definir o nível de isolamento da transação
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
 
     logger.info("---- Novo  Admin  ----")
     logger.debug(f'payload: {payload}')
 
-
-    # Admin token
     admin_token = payload['token']
 
-    # Verify admin token
+    # Verificar o admin token
     if not verify_admin_token(conn, admin_token):
         response = {
             'status': StatusCodes['invalid_token'],
@@ -158,7 +175,7 @@ def register_admin():
         }
         return jsonify(response)
     
-    # Check payload keys
+    # # Verificar chaves do payload
     keysNeededAdmin = ['username', 'password', 'nome', 'genero', 'data_nascimento', 'telefone','email', 'funcao']
     for key in keysNeededAdmin:
         if key not in payload :
@@ -168,7 +185,7 @@ def register_admin():
             }
             return jsonify(response)
     
-    # Encrypt password
+    # Encriptar pass
     payload['password'] = hashlib.sha256(payload['password'].encode()).hexdigest()
     
     statement = 'call addAdmin(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
@@ -207,6 +224,7 @@ def register_crew():
     payload = request.get_json()
    
     conn = db_connection()
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
 
     logger.info("---- Novo tripulante  ----")
@@ -279,10 +297,11 @@ def login():
     
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
+        error_message = str(error).split('\n')[0]
         result = {
             'status': StatusCodes['internal_error'],
             'message': 'Internal error',
-            'results':  f'Error: {error}'
+            'results':  f'Error: {error_message}'
         }
         return jsonify(result) 
     
@@ -386,6 +405,7 @@ def cria_aeroporto():
         return jsonify(response)
    
     conn = db_connection()
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
     
     # Admin token
@@ -424,9 +444,10 @@ def cria_aeroporto():
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
         conn.rollback()
+        error_message = str(error).split('\n')[0]
         result = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
@@ -453,6 +474,7 @@ def cria_voo():
         return jsonify(response)
    
     conn = db_connection()
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
     
     # Admin token
@@ -491,9 +513,10 @@ def cria_voo():
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
         conn.rollback()
+        error_message = str(error).split('\n')[0]
         result = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
@@ -520,6 +543,7 @@ def cria_horario():
         return jsonify(response)
    
     conn = db_connection()
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
     
     # Admin token
@@ -558,9 +582,10 @@ def cria_horario():
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
         conn.rollback()
+        error_message = str(error).split('\n')[0]
         result = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
@@ -631,9 +656,10 @@ def checkar_rotas():
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
+        error_message = str(error).split('\n')[0]
         result = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
@@ -698,9 +724,10 @@ def checkar_lugar():
   
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
+        error_message = str(error_message).split('\n')[0]
         result = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
@@ -729,6 +756,7 @@ def compra():
     token = payload['token']
 
     conn = db_connection()
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
     
     # Verificar token
@@ -751,9 +779,6 @@ def compra():
     statement = 'call addCompra( %s, %s, %s)'
     values = (payload['horario_id'], admin_username(payload['token']), payload['seats'])
     try:
-        # Definir o nível de isolamento de transação para SERIALIZABLE
-        conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
-
         cur.execute(statement, values)
 
         response = {
@@ -765,10 +790,11 @@ def compra():
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
-        conn.rollback()  # Reverter a transação em caso de erro
+        conn.rollback()  
+        error_message = str(error).split('\n')[0]
         response = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
 
     finally:
@@ -826,9 +852,10 @@ def n_destinos(n):
   
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
+        error_message = str(error).split('\n')[0]
         result = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
@@ -884,9 +911,10 @@ def top_rotas(n):
 
     except (Exception, psycopg2.DatabaseError) as error:
         logger.error(error)
+        error_message = str(error).split('\n')[0]
         result = {
             'status': 500,
-            'message': str(error)
+            'message': str(error_message)
         }
     finally:
         if conn is not None:
