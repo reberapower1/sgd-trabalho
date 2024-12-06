@@ -52,11 +52,12 @@ StatusCodes = {
 
 def db_connection():
     try:
-        db = psycopg2.connect(user = "postgres",
-                              password = "batata",
-                              host = "localhost", #"db",
-                              port = "5433",
-                              database = "deijet")
+        db = psycopg2.connect(user = os.getenv("user"),
+                              password = os.getenv("password"),
+                              host = os.getenv("host"),
+                              port = os.getenv("port"),
+                              database = os.getenv("database")
+                            )
         print("Conexão à base de dados estabelecida com sucesso!")
         return db
     except psycopg2.OperationalError as e:

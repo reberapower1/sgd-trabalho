@@ -590,9 +590,3 @@ BEGIN
         mes, h.partida
 END;
 $$;
-
-INSERT INTO assento (id, localizacao, disponibilidade, horario_id)
-VALUES
-    ('A3', TRUE, TRUE, 0),
-    ('A4', FALSE, TRUE, 0),
-    ('A5', TRUE, FALSE, 0);
