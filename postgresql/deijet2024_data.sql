@@ -232,7 +232,7 @@ BEGIN
 	VALUES (username, funcao);
     --adicionar na dos criadores/criados por
     INSERT INTO administrador_administrador(administrador_utilizador_username, administrador_utilizador_username1 )
-    VALUES (username, administrador_utilizador_username)
+    VALUES (username, administrador_utilizador_username);
 EXCEPTION
     WHEN foreign_key_violation THEN
         RAISE EXCEPTION 'Erro: O username não existe na tabela utilizador.';
@@ -260,7 +260,7 @@ BEGIN
 	VALUES (username, funcao);
 EXCEPTION
     WHEN unique_violation THEN
-        RAISE EXCEPTION 'O username já existe.'
+        RAISE EXCEPTION 'O username já existe.';
 
     -- Quando a FK não é válida
     WHEN foreign_key_violation THEN
@@ -558,41 +558,65 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION top_rotas(n INTEGER)
+CREATE OR REPLACE FUNCTION bilhetes(
+    compra_id_check bilhete.compra_id%type
+)
 RETURNS TABLE (
-    mes INTEGER,
-    rotas INTEGER[]
-) 
-LANGUAGE plpgsql
-AS $$
+    nome bilhete.nome%type,
+    id bilhete.id%type,
+    compra_id bilhete.compra_id%type,
+    assento_id bilhete.assento_id%type,
+    assento_horario_id bilhete.assento_horario_id%type
+) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
-        EXTRACT(MONTH FROM h.partida)::INTEGER AS mes,
-        ARRAY(
-            SELECT 
-                ARRAY[voo.id, COUNT(bilhete.id)]::INTEGER[]
-            FROM 
-                bilhete 
-            JOIN 
-                horario h2 ON bilhete.assento_horario_id = h2.id
-            JOIN 
-                voo ON h2.voo_id = voo.id
-            WHERE 
-                DATE_TRUNC('month', h2.partida) = DATE_TRUNC('month', h.partida)
-            GROUP BY 
-                voo.id
-            ORDER BY 
-                COUNT(bilhete.id) DESC
-            LIMIT n
-        ) AS rotas
-    FROM 
-        horario h
-    WHERE 
-        h.partida >= DATE_TRUNC('month', CURRENT_DATE) - INTERVAL '12 months'
-    GROUP BY 
-        mes
-    ORDER BY 
-        mes, h.partida
+    SELECT bilhete.nome, bilhete.id, bilhete.compra_id, bilhete.assento_id, bilhete.assento_horario_id
+    FROM bilhete
+    WHERE bilhete.compra_id = compra_id_check;
 END;
-$$;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION top_rotas(n INTEGER)
+RETURNS TABLE(
+    mes_numero INTEGER,
+    voo_id INTEGER,
+    num_bilhetes INTEGER
+) AS $$
+BEGIN
+    RETURN QUERY
+    WITH meses AS (
+        SELECT generate_series(NOW() - INTERVAL '12 months', NOW(), '1 month')::DATE AS mes
+    ),
+    voos AS (
+        SELECT
+            horario.voo_id,
+            horario.partida,
+            COUNT(bilhete.id)::INTEGER AS total_bilhetes
+        FROM
+            horario
+        LEFT JOIN bilhete ON horario.id = bilhete.assento_horario_id
+        GROUP BY
+            horario.voo_id, horario.partida
+    ),
+    ranked_voos AS (
+        SELECT
+            extract(month from meses.mes)::INTEGER AS mes_numero,
+            voos.voo_id,
+            voos.total_bilhetes AS bilhetes_por_voo,
+            ROW_NUMBER() OVER (PARTITION BY extract(month from meses.mes) ORDER BY voos.total_bilhetes DESC) AS rn
+        FROM
+            meses
+        LEFT JOIN voos ON voos.partida >= meses.mes AND voos.partida < meses.mes + INTERVAL '1 month'
+    )
+    SELECT
+        ranked_voos.mes_numero,
+        ranked_voos.voo_id,
+        ranked_voos.bilhetes_por_voo
+    FROM
+        ranked_voos
+    WHERE
+        ranked_voos.rn <= n
+    ORDER BY
+        ranked_voos.mes_numero, ranked_voos.bilhetes_por_voo DESC;
+END;
+$$ LANGUAGE plpgsql;

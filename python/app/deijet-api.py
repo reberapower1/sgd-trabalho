@@ -283,8 +283,10 @@ def login():
         return jsonify(result) 
     
     else:
-        if tipo_user in [1,2]:
-            role = 'user'
+        if tipo_user ==1:
+            role = 'client'
+        elif tipo_user == 2:
+            role = 'crew'
         elif tipo_user == 3:
             role = 'admin'
         
@@ -335,9 +337,11 @@ def verify_admin_token(conn, token):
             admin_data = cur.fetchone()
         
         if admin_data:
-            return True
+            resposta = {"message": "Admin verificado"} 
+            return True, resposta
         else:
-            return False
+            resposta = {"message": "Token inválido"} 
+            return False, resposta
     except jwt.DecodeError: 
         resposta = {"message": "Token inválido."} 
         return False, resposta
@@ -355,16 +359,18 @@ def verify_client_token(conn, token):
         with conn.cursor() as cur:
             query = """
             SELECT utilizador_username
-            FROM administrador
+            FROM cliente
             WHERE utilizador_username = %s;
             """
             cur.execute(query, (username,))
-            admin_data = cur.fetchone()
+            client_data = cur.fetchone()
         
-        if admin_data:
-            return True
+        if client_data:
+            resposta = {"message": "Cliente verificado"} 
+            return True, resposta
         else:
-            return False
+            resposta = {"message": "Token inválido"} 
+            return False, resposta
     except jwt.DecodeError: 
         resposta = {"message": "Token inválido."} 
         return False, resposta
@@ -376,7 +382,7 @@ def verify_auth_token(conn, token):
         decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
         username = decoded_token.get("username")
         role = decoded_token.get("role")
-        if role != 'user' or role != 'admin':
+        if role != 'client' and role != 'admin' and role != 'crew':
             return False, {"message": "User inválido"}
         
         with conn.cursor() as cur:
@@ -390,9 +396,11 @@ def verify_auth_token(conn, token):
             user_data = cur.fetchone()
         
         if user_data:
-            return True
+            resposta = {"message": "User verificado"} 
+            return True, resposta
         else:
-            return False
+            resposta = {"message": "Token inválido"} 
+            return False, resposta
     except jwt.DecodeError: 
         resposta = {"message": "Token inválido."} 
         return False, resposta
@@ -755,6 +763,76 @@ def compra():
 
     return jsonify(response)
 
+@app.route('/sgdproj/bilhetes', methods = ['GET'])
+def consulta_bilhete():
+    logger.info('GET /sgdproj/bilhetes');   
+    logger.info("---- Consultar bilhetes  ----")
+
+    payload = request.get_json()
+    
+    logger.debug(f'payload: {payload}')
+    
+    # Verificar o payload
+    keyNeeded = ['compra_id','token']
+    response = verify_payload_keys(payload, keyNeeded)
+    if response:
+        return jsonify(response)
+    
+    conn = db_connection()
+    cur = conn.cursor()
+
+    token = payload['token']
+
+    # Verificar token
+    is_client, token_response = verify_client_token(conn, token)
+    if not is_client:
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': token_response['message']
+        }
+        return jsonify(response)
+
+    statment = "SELECT * FROM bilhetes(%s);"
+    values = (payload ['compra_id'],)
+    
+    try:
+        cur.execute(statment, values)
+        bilhetes = cur.fetchall()
+        
+        if not bilhetes:
+            return {"message": "Nenhum bilhete encontrado para esse id_compra."}
+
+        resultado = []
+        for i, bilhete in enumerate(bilhetes):
+            resultado.append({
+                f'bilhete {i + 1}': {
+                    'nome': bilhete[0],
+                    'id': bilhete[1],
+                    'compra_id': bilhete[2],
+                    'assento_id': bilhete[3],
+                    'assento_horario_id': bilhete[4]
+                }
+            })
+        
+        # Retornar a resposta com os dados
+        result = {
+            'status': StatusCodes['success'],
+            'results' : resultado
+        }
+  
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return {"message": "Erro ao procurar bilhetes."}
+    
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+    
+    return jsonify(result)
+    
+
+
 # Route para obter os n destinos com mais voos no último ano
 @app.route('/sgdproj/report/topDestinations/<int:n>', methods = ['GET'])
 def n_destinos(n):
@@ -846,9 +924,14 @@ def top_rotas(n):
     try:
         cur.execute(statement, values)
         tabela = cur.fetchall()
+    
+        results = []
+        for mes, voo_id, num_bilhetes in tabela:
+            mes_data = {"mês": mes,"TopN": []}
+            mes_data["TopN"].append({"id_voo": voo_id,"total_passageiros": num_bilhetes})
+            results.append(mes_data)
 
-        results = [{"mês": linha[0], "TopN": [{"id_voo": r[0], "total_passageiros": r[1]} for r in linha[1]]} for linha in tabela]
-
+        #retornar a resposta com os dados
         result = {
             'status': 200,
             'results': results
