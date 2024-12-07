@@ -177,7 +177,7 @@ AS $$
 BEGIN
     -- Bloquear a tabela utilizador
     LOCK TABLE utilizador IN EXCLUSIVE MODE;
-    -- Insere os dados na tabela utilizador
+    -- Inserir os dados na tabela utilizador
     INSERT INTO utilizador (username, password, nome, genero, data_nascimento, telefone, email)
     VALUES (username, password, nome, genero, data_nascimento, telefone, email);
 
@@ -349,7 +349,7 @@ CREATE OR REPLACE PROCEDURE addVoo(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    LOCK TABLE aeroporto IN EXCLUSIVE MODE;
+    LOCK TABLE voo IN EXCLUSIVE MODE;
     -- Insere os dados na tabela utilizador
     INSERT INTO voo (capacidade, id, administrador_utilizador_username, aeroporto_origem, aeroporto_destino)
     VALUES (capacidade, id, administrador_utilizador_username, aeroporto_origem, aeroporto_destino);
@@ -373,7 +373,7 @@ CREATE OR REPLACE PROCEDURE addHorario(
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    LOCK TABLE aeroporto IN EXCLUSIVE MODE;
+    LOCK TABLE horario IN EXCLUSIVE MODE;
     -- Insere os dados na tabela utilizador
     INSERT INTO horario (partida,chegada,id, preco, voo_id, administrador_utilizador_username)
     VALUES (partida,chegada,id, preco, voo_id, administrador_utilizador_username);
@@ -637,6 +637,7 @@ BEGIN
         localizacao_insere := assentos_array[i][2];
         horario_id_insere := assentos_array[i][3]::INTEGER;
 
+        LOCK TABLE assento IN EXCLUSIVE MODE;
         INSERT INTO assento (id, localizacao, disponibilidade,horario_id)
         VALUES (id_insere, localizacao_insere,true , horario_id_insere)
         ON CONFLICT (id,horario_id) DO NOTHING;
