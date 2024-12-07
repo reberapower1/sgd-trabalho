@@ -1,7 +1,7 @@
 /* 
 	# 
 	# Sistema de Gestão de Dados 2024/2025
-	# Trabalho Prático - Deijet
+	# Trabalho Prático - DEIJet
 	#
 */
 CREATE TABLE cliente (
@@ -620,3 +620,31 @@ BEGIN
         ranked_voos.mes_numero, ranked_voos.bilhetes_por_voo DESC;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE PROCEDURE addAssentos(
+    assentos_array VARCHAR[][]
+)
+LANGUAGE plpgsql AS $$
+DECLARE
+    id_insere		 assento.id%type;
+	localizacao_insere assento.localizacao%type;
+	horario_id_insere	 assento.horario_id%type;
+BEGIN
+    -- Iterar pelo array 
+    FOR i IN 1..array_length(assentos_array, 1) LOOP
+        -- iterar por cada array, dentro do array
+        id_insere := assentos_array[i][1];
+        localizacao_insere := assentos_array[i][2];
+        horario_id_insere := assentos_array[i][3]::INTEGER;
+
+        INSERT INTO assento (id, localizacao, disponibilidade,horario_id)
+        VALUES (id_insere, localizacao_insere,false , horario_id_insere)
+        ON CONFLICT (id,horario_id) DO NOTHING;
+    END LOOP;
+EXCEPTION
+    WHEN unique_violation THEN
+        RAISE NOTICE 'Já existe um assento com o ID % no horário %', id_insere,horario_id_insere ;
+    WHEN OTHERS THEN
+        RAISE EXCEPTION 'Erro ao inserir assentos: %', SQLERRM;
+END;
+$$;

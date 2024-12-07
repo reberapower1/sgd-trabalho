@@ -951,6 +951,62 @@ def top_rotas(n):
 
     return jsonify(result)
 
+@app.route('/sgdproj/assento', methods=['POST'])
+def cria_assento():
+    logger.info('POST /sgdproj/assento')
+    logger.info("---- Novos asentos ----")
+
+    payload = request.get_json()
+
+    logger.debug(f'payload: {payload}')
+
+    keyNeeded = ['seats','token']
+    response = verify_payload_keys(payload, keyNeeded)
+    if response:
+        return jsonify(response)
+
+    conn = db_connection()
+    cur = conn.cursor()
+
+    token = payload['token']
+
+    # Verificar token
+    is_admin, token_response = verify_admin_token(conn, token)
+    if not is_admin:
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': token_response['message']
+        }
+        return jsonify(response)
+    
+    statement = 'call addAssentos(%s)'
+    values = (payload['seats'],)
+    
+    try:
+        cur.execute(statement, values)
+
+        # Retornar a resposta com os dados
+        response = {
+            'status': StatusCodes['success'],
+            'message': 'Assentos não repetidos adicionados com sucesso'}
+
+        conn.commit()
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        logger.error(error)
+        conn.rollback()  
+        error_message = str(error).split('\n')[0]
+        response = {
+            'status': StatusCodes['internal_error'],
+            'message': str(error_message)
+        }
+
+    finally:
+        if conn is not None:
+            cur.close()
+            conn.close()
+
+    return jsonify(response)
 
 
 if __name__ == '__main__':
