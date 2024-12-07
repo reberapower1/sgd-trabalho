@@ -175,6 +175,8 @@ CREATE OR REPLACE PROCEDURE addUtilizador(
 LANGUAGE plpgsql
 AS $$
 BEGIN
+    -- Bloquear a tabela utilizador
+    LOCK TABLE utilizador IN EXCLUSIVE MODE;
     -- Insere os dados na tabela utilizador
     INSERT INTO utilizador (username, password, nome, genero, data_nascimento, telefone, email)
     VALUES (username, password, nome, genero, data_nascimento, telefone, email);
@@ -323,6 +325,7 @@ CREATE OR REPLACE PROCEDURE addAeroporto(
 LANGUAGE plpgsql
 AS $$
 BEGIN
+    LOCK TABLE aeroporto IN EXCLUSIVE MODE;
     -- Insere os dados na tabela utilizador
     INSERT INTO aeroporto (nome, cidade, pais, id, administrador_utilizador_username)
     VALUES (nome, cidade, pais, id, criador);
@@ -346,6 +349,7 @@ CREATE OR REPLACE PROCEDURE addVoo(
 LANGUAGE plpgsql
 AS $$
 BEGIN
+    LOCK TABLE aeroporto IN EXCLUSIVE MODE;
     -- Insere os dados na tabela utilizador
     INSERT INTO voo (capacidade, id, administrador_utilizador_username, aeroporto_origem, aeroporto_destino)
     VALUES (capacidade, id, administrador_utilizador_username, aeroporto_origem, aeroporto_destino);
@@ -369,6 +373,7 @@ CREATE OR REPLACE PROCEDURE addHorario(
 LANGUAGE plpgsql
 AS $$
 BEGIN
+    LOCK TABLE aeroporto IN EXCLUSIVE MODE;
     -- Insere os dados na tabela utilizador
     INSERT INTO horario (partida,chegada,id, preco, voo_id, administrador_utilizador_username)
     VALUES (partida,chegada,id, preco, voo_id, administrador_utilizador_username);
@@ -456,10 +461,11 @@ DECLARE
 BEGIN
     SELECT assento.disponibilidade INTO disponibilidade
     FROM assento
-    WHERE assento.id = id_check AND assento.horario_id = horario_check;
+    WHERE assento.id = id_check AND assento.horario_id = horario_check
+    FOR UPDATE;
 
     IF disponibilidade IS NULL THEN
-        RAISE EXCEPTION 'Assento % não encontrado no horário %.', assento_id_input, horario_id_input;
+        RAISE EXCEPTION 'Assento % não encontrado no horário %.', id_check, horario_check;
     END IF;
 
     RETURN disponibilidade;

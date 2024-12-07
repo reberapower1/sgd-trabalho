@@ -316,50 +316,86 @@ def generate_token(username, role):
 
 #Função para verificar o token do admin
 def verify_admin_token(conn, token):
-    decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
-    username = decoded_token.get("username")
-    role = decoded_token.get("role")
+    resposta = None
+    try:
+        decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
+        username = decoded_token.get("username")
+        role = decoded_token.get("role")
+        
+        if role != 'admin':
+            return False, {"message": "Not an admin"}
+        
+        with conn.cursor() as cur:
+            query = """
+            SELECT utilizador_username
+            FROM administrador
+            WHERE utilizador_username = %s;
+            """
+            cur.execute(query, (username,))
+            admin_data = cur.fetchone()
+        
+        if admin_data:
+            return True
+        else:
+            return False
+    except jwt.DecodeError: 
+        resposta = {"message": "Token inválido."} 
+        return False, resposta
     
-    if role != 'admin':
-        return False, {"message": "Not an admin"}
-    
-    with conn.cursor() as cur:
-        query = """
-        SELECT utilizador_username
-        FROM administrador
-        WHERE utilizador_username = %s;
-        """
-
-        cur.execute(query, (username,))
-        admin_data = cur.fetchone()
-    
-    if admin_data:
-        return True
-    else:
-        return False
+def verify_client_token(conn, token):
+    resposta = None
+    try:
+        decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
+        username = decoded_token.get("username")
+        role = decoded_token.get("role")
+        
+        if role != 'client':
+            return False, {"message": "Not an client"}
+        
+        with conn.cursor() as cur:
+            query = """
+            SELECT utilizador_username
+            FROM administrador
+            WHERE utilizador_username = %s;
+            """
+            cur.execute(query, (username,))
+            admin_data = cur.fetchone()
+        
+        if admin_data:
+            return True
+        else:
+            return False
+    except jwt.DecodeError: 
+        resposta = {"message": "Token inválido."} 
+        return False, resposta
 
 #Função para verificar o token de autenticação
 def verify_auth_token(conn, token):
-    decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
-    username = decoded_token.get("username")
-    role = decoded_token.get("role")
-    if role != 'user' or role != 'admin':
-        return False, {"message": "User inválido"}
-    
-    with conn.cursor() as cur:
-        query = """
-        SELECT username
-        FROM utilizador
-        WHERE username = %s;
-        """
+    resposta = None
+    try: 
+        decoded_token = jwt.decode(token, secret_key, algorithms=["HS256"])
+        username = decoded_token.get("username")
+        role = decoded_token.get("role")
+        if role != 'user' or role != 'admin':
+            return False, {"message": "User inválido"}
+        
+        with conn.cursor() as cur:
+            query = """
+            SELECT username
+            FROM utilizador
+            WHERE username = %s;
+            """
 
-        cur.execute(query, (username,))
-        user_data = cur.fetchone()
-    
-    if user_data:
-        return True
-    else:
-        return False
+            cur.execute(query, (username,))
+            user_data = cur.fetchone()
+        
+        if user_data:
+            return True
+        else:
+            return False
+    except jwt.DecodeError: 
+        resposta = {"message": "Token inválido."} 
+        return False, resposta
     
 #Função que retorna o username associado a certo token
 def get_username(token):
@@ -390,10 +426,11 @@ def cria_aeroporto():
     cur = conn.cursor()
 
     # Verify admin token
-    if not verify_admin_token(conn, admin_token):
+    is_admin, token_response = verify_admin_token(conn, admin_token)
+    if not is_admin:
         response = {
             'status': StatusCodes['invalid_token'],
-            'message': 'Admin token inválido'
+            'message': token_response['message']
         }
         return jsonify(response)
     
@@ -448,10 +485,11 @@ def cria_voo():
     admin_token = payload['token']
 
     # Verificar admin token
-    if not verify_admin_token(conn, admin_token):
+    is_admin, token_response = verify_admin_token(conn, admin_token)
+    if not is_admin:
         response = {
             'status': StatusCodes['invalid_token'],
-            'message': 'Admin token inválido'
+            'message': token_response['message']
         }
         return jsonify(response)
     
@@ -505,10 +543,11 @@ def cria_horario():
     admin_token = payload['token']
 
     # Verificar admin token
-    if not verify_admin_token(conn, admin_token):
+    is_admin, token_response = verify_admin_token(conn, admin_token)
+    if not is_admin:
         response = {
             'status': StatusCodes['invalid_token'],
-            'message': 'Admin token inválido'
+            'message': token_response['message']
         }
         return jsonify(response)
     
@@ -558,10 +597,11 @@ def checkar_rotas():
     token = payload['token']
 
     # Verificar token
-    if not verify_auth_token(conn, token):
+    is_user, token_response = verify_auth_token(conn, token)
+    if not is_user:
         response = {
             'status': StatusCodes['invalid_token'],
-            'message': 'Token inválido'
+            'message': token_response['message']
         }
         return jsonify(response)
        
@@ -618,10 +658,11 @@ def checkar_lugar():
     token = payload['token']
 
     # Verificar token
-    if not verify_auth_token(conn, token):
+    is_user, token_response = verify_auth_token(conn, token)
+    if not is_user:
         response = {
             'status': StatusCodes['invalid_token'],
-            'message': 'Token inválido'
+            'message': token_response['message']
         }
         return jsonify(response)
     
@@ -675,10 +716,11 @@ def compra():
     cur = conn.cursor()
     
     # Verificar token
-    if not verify_auth_token(conn, token):
+    is_client, token_response = verify_client_token(conn, token)
+    if not is_client:
         response = {
             'status': StatusCodes['invalid_token'],
-            'message': 'Token inválido'
+            'message': token_response['message']
         }
         return jsonify(response)
     
@@ -735,13 +777,13 @@ def n_destinos(n):
     token = payload['token']
 
     # Verificar token
-    if not verify_auth_token(conn, token):
+    is_user, token_response = verify_auth_token(conn, token)
+    if not is_user:
         response = {
             'status': StatusCodes['invalid_token'],
-            'message': 'Token inválido'
+            'message': token_response['message']
         }
         return jsonify(response)
-       
     statement = ' SELECT * from top_destinos (%s)'
     values = ((n,))
 
@@ -790,10 +832,11 @@ def top_rotas(n):
     token = payload['token']
 
     # Verificar token
-    if not verify_auth_token(conn, token):
+    is_user, token_response = verify_auth_token(conn, token)
+    if not is_user:
         response = {
-            'status': 400,
-            'message': 'Token inválido'
+            'status': StatusCodes['invalid_token'],
+            'message': token_response['message']
         }
         return jsonify(response)
 
