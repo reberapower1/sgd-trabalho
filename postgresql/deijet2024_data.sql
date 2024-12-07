@@ -638,7 +638,7 @@ BEGIN
         horario_id_insere := assentos_array[i][3]::INTEGER;
 
         INSERT INTO assento (id, localizacao, disponibilidade,horario_id)
-        VALUES (id_insere, localizacao_insere,false , horario_id_insere)
+        VALUES (id_insere, localizacao_insere,true , horario_id_insere)
         ON CONFLICT (id,horario_id) DO NOTHING;
     END LOOP;
 EXCEPTION
