@@ -1003,6 +1003,8 @@ def efetuar_pagamento():
         return jsonify(response)
 
     conn = db_connection()
+    # Configurar o nível de isolamento como SERIALIZABLE para evitar condições de corrida
+    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
     cur = conn.cursor()
 
     token = payload['token']
@@ -1017,10 +1019,16 @@ def efetuar_pagamento():
         return jsonify(response)
 
     try:
+        # Recuperar o valor total da compra e bloquear a linha da compra
+        cur.execute("SELECT valor FROM compra WHERE id = %s FOR UPDATE;", (payload['compra_id'],))
+        compra = cur.fetchone()
+        if not compra:
+            raise ValueError('Compra não encontrada.')
+
+        valor_total_compra = compra[0]
+
         # Verificar se a compra já foi paga
-        cur.execute("""
-            SELECT COUNT(*) FROM pagamento WHERE compra_id = %s;
-        """, (payload['compra_id'],))
+        cur.execute("SELECT COUNT(*) FROM pagamento WHERE compra_id = %s;", (payload['compra_id'],))
         pagamentos_existentes = cur.fetchone()[0]
 
         if pagamentos_existentes > 0:
@@ -1028,14 +1036,6 @@ def efetuar_pagamento():
                 'status': StatusCodes['api_error'],
                 'message': 'Pagamento já realizado para esta compra. Pagamentos duplicados não são permitidos.'
             })
-
-        # Recuperar o valor total da compra
-        cur.execute("SELECT valor FROM compra WHERE id = %s;", (payload['compra_id'],))
-        compra = cur.fetchone()
-        if not compra:
-            raise ValueError('Compra não encontrada.')
-
-        valor_total_compra = compra[0]
 
         # Calcular o valor total dos pagamentos
         metodos_pagamento = payload['metodos_pagamento']
@@ -1095,6 +1095,14 @@ def efetuar_pagamento():
             'results': {'compra_id': payload['compra_id']}
         }
 
+    except psycopg2.errors.SerializationFailure as error:
+        logger.error(error)
+        conn.rollback()
+        response = {
+            'status': StatusCodes['api_error'],
+            'message': 'Conflito detectado. Tente novamente.'
+        }
+
     except Exception as error:
         logger.error(error)
         conn.rollback()
@@ -1109,8 +1117,6 @@ def efetuar_pagamento():
             conn.close()
 
     return jsonify(response)
-
-
 
 @app.route('/sgdproj/report/financial_data', methods=['GET'])
 def relatorio_financeiro():
