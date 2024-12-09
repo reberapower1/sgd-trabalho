@@ -1,6 +1,6 @@
 ##
 ## =============================================
-## ======== Sistema de Gestão de Dados =========
+## ======== Sistemas de Gestão de Dados =========
 ## ============== LECD  2024/2025 ==============
 ## =============================================
 ## ============ Trabalho Prático ===============
@@ -11,21 +11,8 @@
 ## =============================================
 ##
 ## Authors: Diana Martins
-##   
+##
 
-
-'''
-How to run?
-$ python3 -m venv proj_sgd_env
-$ source proj_sgd_env/bin/activate
-$ pip3 install flask
-$ pip3 install jwt
-$ pip3 install python-dotenv
-$ pip3 install psycopg2-binary
-$ python3 deijet-api.py
---> Ctrl+C to stop
-$ deactivate
-'''
 import time
 import logging
 import psycopg2
@@ -588,7 +575,7 @@ def checkar_rotas():
 
     logger.debug(f'payload: {payload}')
     
-    keysNeededRoutes = ['aeroporto_origem','aeroporto_destino', 'token']
+    keysNeededRoutes = ['token']
     response= verify_payload_keys(payload, keysNeededRoutes)
 
     conn = db_connection()
@@ -726,15 +713,16 @@ def compra():
     
     keysNeededBook =  ['horario_id', 'seats','token']
 
-    statement = 'call addCompra( %s, %s, %s)'
+    statement = 'SELECT addCompra(%s, %s, %s)'
     values = (payload['horario_id'], get_username(payload['token']), payload['seats'])
     
     try:
         cur.execute(statement, values)
+        compra_id = cur.fetchone()[0]
 
         response = {
             'status': StatusCodes['success'],
-            'results': {'schedule_id': payload['horario_id']}
+            'results': {'schedule_id': payload['horario_id'], 'id de compra': compra_id}
         }
 
         conn.commit()
@@ -822,8 +810,6 @@ def consulta_bilhete():
             conn.close()
     
     return jsonify(result)
-    
-
 
 # Route para obter os n destinos com mais voos no último ano
 @app.route('/sgdproj/report/topDestinations/<int:n>', methods = ['GET'])
@@ -1001,126 +987,120 @@ def cria_assento():
     return jsonify(response)
 
 @app.route('/sgdproj/payment', methods=['POST'])
-def make_payment():
+def efetuar_pagamento():
     logger.info('POST /sgdproj/payment')
-    logger.info("---- Pagamento de Reserva ----")
+    logger.info("---- Efetuar Pagamento ----")
 
     payload = request.get_json()
     logger.debug(f'payload: {payload}')
 
-    # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe'
-        }
+    # Verificar os campos necessários
+    keysNeededPayment = ['compra_id', 'metodos_pagamento', 'token']
+    response = verify_payload_keys(payload, keysNeededPayment)
+    if response:
         return jsonify(response)
-
-    # Verificar os parâmetros necessários
-    keysNeededPayment = ['compra_id', 'payments']
-    for key in keysNeededPayment:
-        if key not in payload:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'{key} value not in payload'
-            }
-            return jsonify(response)
 
     conn = db_connection()
     cur = conn.cursor()
 
-    # Configurar isolamento de transação
-    conn.set_isolation_level(psycopg2.extensions.ISOLATION_LEVEL_SERIALIZABLE)
+    token = payload['token']
+
+    # Verificar token
+    is_client, token_response = verify_client_token(conn, token)
+    if not is_client:
+        response = {
+            'status': StatusCodes['invalid_token'],
+            'message': token_response['message']
+        }
+        return jsonify(response)
 
     try:
-        # Verificar o valor devido da compra
-        cur.execute("SELECT valor, cliente_utilizador_username FROM compra WHERE id = %s", (payload['compra_id'],))
+        # Verificar se a compra já foi paga
+        cur.execute("""
+            SELECT COUNT(*) FROM pagamento WHERE compra_id = %s;
+        """, (payload['compra_id'],))
+        pagamentos_existentes = cur.fetchone()[0]
+
+        if pagamentos_existentes > 0:
+            return jsonify({
+                'status': StatusCodes['api_error'],
+                'message': 'Pagamento já realizado para esta compra. Pagamentos duplicados não são permitidos.'
+            })
+
+        # Recuperar o valor total da compra
+        cur.execute("SELECT valor FROM compra WHERE id = %s;", (payload['compra_id'],))
         compra = cur.fetchone()
         if not compra:
-            response = {
+            raise ValueError('Compra não encontrada.')
+
+        valor_total_compra = compra[0]
+
+        # Calcular o valor total dos pagamentos
+        metodos_pagamento = payload['metodos_pagamento']
+        valor_total_pagamento = sum(metodo['valor'] for metodo in metodos_pagamento)
+
+        # Validar se o total pago corresponde ao valor da compra
+        if valor_total_pagamento != valor_total_compra:
+            return jsonify({
                 'status': StatusCodes['api_error'],
-                'message': 'Compra não encontrada'
-            }
-            return jsonify(response)
+                'message': f'O valor total do pagamento ({valor_total_pagamento}) não corresponde ao valor da compra ({valor_total_compra}).'
+            })
 
-        valor_devido = compra[0]
-        cliente_responsavel = compra[1]
-        cliente_autenticado = cliente_username(payload['token'])
+        # Processar cada método de pagamento
+        for metodo in metodos_pagamento:
+            # Validar informações do método individual
+            if not all(k in metodo for k in ('metodo_pagamento', 'detalhes', 'valor')):
+                raise ValueError('Cada método de pagamento deve conter "metodo_pagamento", "detalhes" e "valor".')
 
-        # Verificar se a compra pertence ao cliente autenticado
-        if cliente_responsavel != cliente_autenticado:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'A compra pertence ao cliente {cliente_responsavel}. Deseja pagar mesmo assim?'
-            }
-            return jsonify(response)
+            metodo_tipo = metodo['metodo_pagamento'].upper()
+            detalhes = metodo['detalhes']
+            valor = metodo['valor']
 
-        # Calcula o total dos pagamentos no payload
-        total_pagamento = sum(payment['valor'] for payment in payload['payments'])
-
-        # Verifica se o total dos pagamentos excede o valor devido
-        if total_pagamento > valor_devido:
-            response = {
-                'status': StatusCodes['api_error'],
-                'message': f'O total dos pagamentos ({total_pagamento}) excede o valor devido ({valor_devido}). Excedente: {total_pagamento - valor_devido}'
-            }
-            return jsonify(response)
-
-        # Insere pagamentos no banco de dados
-        for payment in payload['payments']:
-            if payment['valor'] <= 0:
-                response = {
-                    'status': StatusCodes['api_error'],
-                    'message': f'O valor do pagamento deve ser maior que 0. Valor recebido: {payment["valor"]}'
-                }
-                return jsonify(response)
-
-            if payment['metodo_pagamento'] not in ['credit_card', 'debit_card', 'mbway']:
-                response = {
-                    'status': StatusCodes['api_error'],
-                    'message': f'Método de pagamento inválido: {payment["metodo_pagamento"]}'
-                }
-                return jsonify(response)
-
-            # Insere na tabela pagamento
-            cur.execute(
-                "INSERT INTO pagamento (data, valor, estado, compra_id) VALUES (NOW(), %s, %s, %s) RETURNING id",
-                (payment['valor'], 'concluido', payload['compra_id'])
-            )
+            # Inserir pagamento principal
+            pagamento_statement = '''
+                INSERT INTO pagamento (data, valor, estado, compra_id)
+                VALUES (NOW(), %s, 'Concluído', %s) RETURNING id;
+            '''
+            cur.execute(pagamento_statement, (valor, payload['compra_id']))
             pagamento_id = cur.fetchone()[0]
 
-            # Insere nas tabelas específicas de pagamento
-            if payment['metodo_pagamento'] == 'credit_card':
-                cur.execute(
-                    "INSERT INTO pagamento_credito (valor, n_conta, pagamento_id) VALUES (%s, %s, %s)",
-                    (payment['valor'], payment['n_conta'], pagamento_id)
-                )
-            elif payment['metodo_pagamento'] == 'debit_card':
-                cur.execute(
-                    "INSERT INTO pagamento_debito (valor, n_conta, pagamento_id) VALUES (%s, %s, %s)",
-                    (payment['valor'], payment['n_conta'], pagamento_id)
-                )
-            elif payment['metodo_pagamento'] == 'mbway':
-                cur.execute(
-                    "INSERT INTO pagamento_mbway (valor, telefone, pagamento_id) VALUES (%s, %s, %s)",
-                    (payment['valor'], payment['telefone'], pagamento_id)
-                )
+            # Inserir detalhes do método
+            if metodo_tipo == 'MBWAY':
+                mbway_statement = '''
+                    INSERT INTO pagamento_mbway (id, telefone, valor, pagamento_id)
+                    VALUES (DEFAULT, %s, %s, %s);
+                '''
+                cur.execute(mbway_statement, (detalhes['telefone'], valor, pagamento_id))
+            elif metodo_tipo == 'CREDITO':
+                credito_statement = '''
+                    INSERT INTO pagamento_credito (id, valor, n_conta, pagamento_id)
+                    VALUES (DEFAULT, %s, %s, %s);
+                '''
+                cur.execute(credito_statement, (valor, detalhes['n_conta'], pagamento_id))
+            elif metodo_tipo == 'DEBITO':
+                debito_statement = '''
+                    INSERT INTO pagamento_debito (id, valor, n_conta, pagamento_id)
+                    VALUES (DEFAULT, %s, %s, %s);
+                '''
+                cur.execute(debito_statement, (valor, detalhes['n_conta'], pagamento_id))
+            else:
+                raise ValueError(f'Método de pagamento "{metodo_tipo}" inválido.')
 
-        # Confirmar a transação
         conn.commit()
-
         response = {
             'status': StatusCodes['success'],
-            'message': 'Pagamentos registrados com sucesso',
+            'message': 'Pagamentos efetuados com sucesso',
             'results': {'compra_id': payload['compra_id']}
         }
-    except (Exception, psycopg2.DatabaseError) as error:
+
+    except Exception as error:
         logger.error(error)
         conn.rollback()
         response = {
             'status': StatusCodes['internal_error'],
-            'message': str(error)
+            'message': f'Erro ao processar pagamento: {error}'
         }
+
     finally:
         if conn is not None:
             cur.close()
@@ -1128,47 +1108,61 @@ def make_payment():
 
     return jsonify(response)
 
+
+
 @app.route('/sgdproj/report/financial_data', methods=['GET'])
-def get_financial_data():
+def relatorio_financeiro():
     logger.info('GET /sgdproj/report/financial_data')
-    logger.info("---- Relatório Financeiro por Rota ----")
+    logger.info("---- Relatório Financeiro ----")
 
     payload = request.get_json()
+    logger.debug(f'payload: {payload}')
 
-    # Verificar se o token existe no payload
-    if 'token' not in payload:
-        response = {
-            'status': StatusCodes['api_error'],
-            'message': 'Token não existe no payload'
-        }
+    # Verificar se o token existe
+    keyNeeded = ['token']
+    response = verify_payload_keys(payload, keyNeeded)
+    if response:
         return jsonify(response)
 
     conn = db_connection()
     cur = conn.cursor()
 
-    # Verificar o token
     token = payload['token']
-    if not verify_auth_token(conn, token):
+
+    # Verificar token
+    is_user, token_response = verify_auth_token(conn, token)
+    if not is_user:
         response = {
             'status': StatusCodes['invalid_token'],
-            'message': 'Token inválido ou expirado. Faça login novamente.'
+            'message': token_response['message']
         }
         return jsonify(response)
 
+    # Consultar dados financeiros
+    financeiro_statement = '''
+        SELECT
+            v.id AS flight_code,
+            COALESCE(SUM(pc.valor), 0) AS credit_card,
+            COALESCE(SUM(pd.valor), 0) AS debt_card,
+            COALESCE(SUM(pm.valor), 0) AS mbway,
+            COALESCE(SUM(pc.valor), 0) + COALESCE(SUM(pd.valor), 0) + COALESCE(SUM(pm.valor), 0) AS total
+        FROM
+            voo v
+        LEFT JOIN horario h ON v.id = h.voo_id
+        LEFT JOIN compra c ON h.id = c.horario_id
+        LEFT JOIN pagamento p ON c.id = p.compra_id
+        LEFT JOIN pagamento_credito pc ON p.id = pc.pagamento_id
+        LEFT JOIN pagamento_debito pd ON p.id = pd.pagamento_id
+        LEFT JOIN pagamento_mbway pm ON p.id = pm.pagamento_id
+        WHERE
+            p.data >= NOW() - INTERVAL '12 months'
+        GROUP BY v.id
+        ORDER BY total DESC;
+    '''
+
     try:
-        # Executar a função do banco de dados para obter os dados financeiros
-        cur.execute("SELECT * FROM get_financial_data_last_12_months();")
+        cur.execute(financeiro_statement)
         rows = cur.fetchall()
-
-        if not rows:  # Verificar se há dados devolvidos
-            response = {
-                'status': StatusCodes['success'],
-                'message': 'Nenhum dado financeiro encontrado para os últimos 12 meses.',
-                'results': []
-            }
-            return jsonify(response)
-
-        # Formatar os resultados
         results = [
             {
                 "flight_code": row[0],
@@ -1184,12 +1178,13 @@ def get_financial_data():
             'results': results
         }
 
-    except (Exception, psycopg2.DatabaseError) as error:
-        logger.error(f"Erro ao gerar relatório financeiro: {error}")
+    except Exception as error:
+        logger.error(error)
         response = {
             'status': StatusCodes['internal_error'],
-            'message': 'Erro ao processar a solicitação. Tente novamente mais tarde.'
+            'message': f'Erro ao gerar relatório financeiro: {error}'
         }
+
     finally:
         if conn is not None:
             cur.close()

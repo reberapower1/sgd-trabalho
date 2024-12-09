@@ -222,7 +222,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://127.0.0.1:5000/sgdproj/register/admin",
+							"raw": "http://127.0.0.1:5000/sgdproj/register/client",
 							"protocol": "http",
 							"host": [
 								"127",
@@ -234,20 +234,20 @@
 							"path": [
 								"sgdproj",
 								"register",
-								"admin"
+								"client"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "http://127.0.0.1:5000/sgdproj/register/admin",
+					"name": "http://127.0.0.1:5000/sgdproj/register/client",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"username\": \"huguinho\", \r\n\"password\":\"1234\", \r\n\"nome\": \"hugo\", \r\n\"genero\":\"não binário\", \r\n\"data_nascimento\": \"2002-03-20\", \r\n\"telefone\": 913666409,\r\n\"email\": \"hugo@dei.pt\", \r\n\"funcao\": \"administrativo\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluX3Jvb3QiLCJyb2xlIjoiYWRtaW4ifQ.Q7fWGgb6MEC_5zj15F6pPsv3jm6WvY26Kam0C6m1xGI\"}",
+							"raw": "{\r\n   \"username\": \"lastteste\", \r\n   \"password\":\"ultimo_teste\", \r\n   \"nome\":\"diana\", \r\n   \"genero\": \"feminino\", \r\n   \"data_nascimento\":\"2005_02_17\", \r\n   \"telefone\": 268890123,\r\n   \"email\": \"lasttest@dei.pt\"\r\n}\r\n",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -278,39 +278,6 @@
 		{
 			"name": "register_admin",
 			"item": [
-				{
-					"name": "http://127.0.0.1:5000/sgdproj/register/admin",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\"username\": \"maripriv\", \r\n\"password\":\"1234\", \r\n\"nome\": \"mariana\", \r\n\"genero\":\"feminino\", \r\n\"data_nascimento\": \"2003-10-19\", \r\n\"telefone\": 980789664,\r\n\"email\": \"mari@dei.pt\", \r\n\"funcao\": \"aeromoça\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGVuYWF2YWxvciIsInJvbGUiOiJhZG1pbiJ9.SOBvxJbaStVNz9uzC42_xIeNVl0HnqfBoP7iU8aqzic\"}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://127.0.0.1:5000/sgdproj/register/admin",
-							"protocol": "http",
-							"host": [
-								"127",
-								"0",
-								"0",
-								"1"
-							],
-							"port": "5000",
-							"path": [
-								"sgdproj",
-								"register",
-								"admin"
-							]
-						}
-					},
-					"response": []
-				},
 				{
 					"name": "http://127.0.0.1:5000/sgdproj/register/admin",
 					"request": {
@@ -487,7 +454,7 @@
 			"name": "login",
 			"item": [
 				{
-					"name": "http://127.0.0.1:5000/sgdproj/register/admin",
+					"name": "http://127.0.0.1:5000/sgdproj/login",
 					"request": {
 						"method": "PUT",
 						"header": [],
@@ -519,13 +486,77 @@
 					"response": []
 				},
 				{
-					"name": "http://127.0.0.1:5000/sgdproj/register/admin",
+					"name": "http://127.0.0.1:5000/sgdproj/login",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\"username\": \"maripriv\", \r\n\"password\":\"6789\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/login",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"username\": \"lastteste\", \r\n   \"password\":\"ultimo_teste\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/login",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/login",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"username\": \"gusta\", \r\n\"password\":\"1234\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -556,7 +587,7 @@
 			"name": "add_aeroporto",
 			"item": [
 				{
-					"name": "http://127.0.0.1:5000/sgdproj/register/admin",
+					"name": "http://127.0.0.1:5000/sgdproj/airport",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -588,7 +619,7 @@
 					"response": []
 				},
 				{
-					"name": "http://127.0.0.1:5000/sgdproj/register/admin",
+					"name": "http://127.0.0.1:5000/sgdproj/airport",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -627,6 +658,70 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\"nome\": \"aeroporto de faro\", \r\n\"cidade\":\"Faro\", \r\n\"pais\":\"Portugal\",\r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlwcml2Iiwicm9sZSI6ImFkbWluIn0.RoWNh3rj867k491giaT4JrFwtLJ2oJEcePe7a-vFTF0\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/airport",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"airport"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/airport",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"nome\":\"dfgh\", \"cidade\":\"dfghj\", \"pais\":\"dfgh\", \"id\":4678, \"token\":\"ffgchjb678\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/airport",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"airport"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/airport",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"nome\": \"Aeroporto Incrível\", \r\n\"cidade\":\"Coimbra\", \r\n\"pais\": \"Portugal\", \r\n\"id\": 89, \r\n\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1c3RhIiwicm9sZSI6ImFkbWluIn0.ZbfSyZpRFlTZ4KshO28zLyfA-SQYMNyH-fDjiA9LEYQ\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -751,6 +846,38 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/flight",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"capacidade\": 200, \r\n\"id\": 20, \r\n\"aeroporto_origem\" :89,\r\n\"aeroporto_destino\": 17, \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1c3RhIiwicm9sZSI6ImFkbWluIn0.ZbfSyZpRFlTZ4KshO28zLyfA-SQYMNyH-fDjiA9LEYQ\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/flight",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"flight"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -758,7 +885,7 @@
 			"name": "add_horario",
 			"item": [
 				{
-					"name": "http://127.0.0.1:5000/sgdproj/flight",
+					"name": "http://127.0.0.1:5000/sgdproj/schedule",
 					"request": {
 						"method": "POST",
 						"header": [],
@@ -852,6 +979,75 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/schedule",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"partida\": \"2024-11-10 18:00:00 \",\r\n\"chegada\": \"2024-11-12 02:00:00\",\r\n\"id\" :66,\r\n\"preco\": 390,\r\n\"voo_id\": 20,\r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1c3RhIiwicm9sZSI6ImFkbWluIn0.ZbfSyZpRFlTZ4KshO28zLyfA-SQYMNyH-fDjiA9LEYQ\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/schedule",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"schedule"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "add_assentos",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/assento",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"seats\": [[\"A1\",\"false\",\"66\"],[\"A2\",\"true\",\"66\"]],\r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1c3RhIiwicm9sZSI6ImFkbWluIn0.ZbfSyZpRFlTZ4KshO28zLyfA-SQYMNyH-fDjiA9LEYQ\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/assento",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"assento"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -869,6 +1065,41 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\"aeroporto_origem\": 34,\r\n\"aeroporto_destino\": 172,\r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1hcmlwcml2Iiwicm9sZSI6ImFkbWluIn0.RoWNh3rj867k491giaT4JrFwtLJ2oJEcePe7a-vFTF0\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/check_routes",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"check_routes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/check_routes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"aeroporto_origem\": 89,\r\n\"aeroporto_destino\": 17,\r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imd1c3RhIiwicm9sZSI6ImFkbWluIn0.ZbfSyZpRFlTZ4KshO28zLyfA-SQYMNyH-fDjiA9LEYQ\" \r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -934,6 +1165,161 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "add_compra",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/book_flight",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"horario_id\": 66, \r\n\"seats\": [[\"patricia\", \"2022346719\", \"A1\"],[\"Duarte\", \"2022452213\", \"A2\"]],\r\n\"token\":  \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imxhc3R0ZXN0ZSIsInJvbGUiOiJjbGllbnQifQ.sR3X3Ia7Io7g8-Bu4huvgOAGM6_j3IAxJXa7K654HCg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/book_flight",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"book_flight"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/book_flight",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n\"seats\": [[\"patricia\", \"2022346719\", \"A1\"],[\"Duarte\", \"2022452213\", \"A2\"]],\r\n\"token\":  \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imxhc3R0ZXN0ZSIsInJvbGUiOiJjbGllbnQifQ.sR3X3Ia7Io7g8-Bu4huvgOAGM6_j3IAxJXa7K654HCg\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/book_flight",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"book_flight"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "bilhetes",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/bilhetes",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"compra_id\": 40,\r\n\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imxhc3R0ZXN0ZSIsInJvbGUiOiJjbGllbnQifQ.sR3X3Ia7Io7g8-Bu4huvgOAGM6_j3IAxJXa7K654HCg\"}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/bilhetes",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"bilhetes"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "top_destinos",
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/report/topDestinations/2",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imxhc3R0ZXN0ZSIsInJvbGUiOiJjbGllbnQifQ.sR3X3Ia7Io7g8-Bu4huvgOAGM6_j3IAxJXa7K654HCg\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/report/topDestinations/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"report",
+								"topDestinations",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "top_rotas",
+			"item": []
 		}
 	]
 }

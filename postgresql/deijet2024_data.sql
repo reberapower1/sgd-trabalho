@@ -1,6 +1,6 @@
 /* 
 	# 
-	# Sistema de Gestão de Dados 2024/2025
+	# Sistemas de Gestão de Dados 2024/2025
 	# Trabalho Prático - DEIJet
 	#
 */
@@ -472,11 +472,12 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE PROCEDURE addCompra(
+CREATE OR REPLACE FUNCTION addCompra(
     horario_check horario.id%type,
     cliente_username utilizador.username%type,
     assentos_array VARCHAR[][]
 )
+RETURNS compra.id%type
 LANGUAGE plpgsql AS $$
 DECLARE
     preco_horario horario.preco%type;
@@ -527,6 +528,7 @@ BEGIN
         INSERT INTO bilhete (nome, id, compra_id, assento_id, assento_horario_id)
         VALUES (nome_bilhete, id_passageiro, compra_id, assento_id, horario_check);
     END LOOP;
+    RETURN compra_id;
 END;
 $$;
 
@@ -649,3 +651,29 @@ EXCEPTION
         RAISE EXCEPTION 'Erro ao inserir assentos: %', SQLERRM;
 END;
 $$;
+
+INSERT INTO utilizador (
+    username,
+    password,
+    nome,
+    genero,
+    data_nascimento,
+    telefone,
+    email
+) VALUES (
+    'primeiro_administrador',
+    '7c82a52267c5a53838a5874962e86e81e9af01f51af585d149733b4b14be1cc2',
+    'Administrador',
+    'Outro',
+    '2000-01-01',
+    123456789,
+    'admin@example.com'
+);
+
+INSERT INTO administrador (
+    funcao,
+    utilizador_username
+) VALUES (
+    'Administrador Geral',
+    'primeiro_administrador'
+);
