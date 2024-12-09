@@ -580,6 +580,7 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION top_rotas(n INTEGER)
 RETURNS TABLE(
+    ano INTEGER,
     mes_numero INTEGER,
     voo_id INTEGER,
     num_bilhetes INTEGER
@@ -587,7 +588,9 @@ RETURNS TABLE(
 BEGIN
     RETURN QUERY
     WITH meses AS (
-        SELECT generate_series(NOW() - INTERVAL '12 months', NOW(), '1 month')::DATE AS mes
+        SELECT generate_series(date_trunc('month', NOW() - INTERVAL '12 months'),
+        date_trunc('month', NOW() - INTERVAL '1 month'),'1 month')::
+        DATE AS mes
     ),
     voos AS (
         SELECT
@@ -602,15 +605,17 @@ BEGIN
     ),
     ranked_voos AS (
         SELECT
+            extract(year from meses.mes)::INTEGER AS ano,
             extract(month from meses.mes)::INTEGER AS mes_numero,
             voos.voo_id,
             voos.total_bilhetes AS bilhetes_por_voo,
-            ROW_NUMBER() OVER (PARTITION BY extract(month from meses.mes) ORDER BY voos.total_bilhetes DESC) AS rn
+            ROW_NUMBER() OVER (PARTITION BY extract(year from meses.mes), extract(month from meses.mes) ORDER BY voos.total_bilhetes DESC) AS rn
         FROM
             meses
-        LEFT JOIN voos ON voos.partida >= meses.mes AND voos.partida < meses.mes + INTERVAL '1 month'
+        LEFT JOIN voos ON voos.partida >= meses.mes AND voos.partida < (meses.mes + INTERVAL '1 month')
     )
     SELECT
+        ranked_voos.ano,    
         ranked_voos.mes_numero,
         ranked_voos.voo_id,
         ranked_voos.bilhetes_por_voo
@@ -619,7 +624,7 @@ BEGIN
     WHERE
         ranked_voos.rn <= n
     ORDER BY
-        ranked_voos.mes_numero, ranked_voos.bilhetes_por_voo DESC;
+        ranked_voos.ano,ranked_voos.mes_numero, ranked_voos.bilhetes_por_voo DESC;
 END;
 $$ LANGUAGE plpgsql;
 

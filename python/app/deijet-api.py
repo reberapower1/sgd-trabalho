@@ -904,8 +904,8 @@ def top_rotas(n):
         tabela = cur.fetchall()
     
         results = []
-        for mes, voo_id, num_bilhetes in tabela:
-            mes_data = {"mês": mes,"TopN": []}
+        for ano, mes, voo_id, num_bilhetes in tabela:
+            mes_data = {"ano": ano, "mês": mes,"TopN": []}
             mes_data["TopN"].append({"id_voo": voo_id,"total_passageiros": num_bilhetes})
             results.append(mes_data)
 
