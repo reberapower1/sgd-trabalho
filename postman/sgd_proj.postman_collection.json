@@ -285,7 +285,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"username\": \"linde\", \r\n\"password\":\"1234\", \r\n\"nome\": \"miguel\", \r\n\"genero\":\"fluído\", \r\n\"data_nascimento\": \"2003-10-19\", \r\n\"telefone\": 980789664,\r\n\"email\": \"mike@dei.pt\", \r\n\"funcao\": \"secretárioa\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGVuYWF2YWxvciIsInJvbGUiOiJhZG1pbiJ9.SOBvxJbaStVNz9uzC42_xIeNVl0HnqfBoP7iU8aqzic\"}",
+							"raw": "{\"username\": \"linde\", \r\n\"password\":\"1234\", \r\n\"nome\": \"miguel\", \r\n\"genero\":\"fluído\", \r\n\"data_nascimento\": \"2003-10-19\", \r\n\"telefone\": 980789664,\r\n\"email\": \"mike@dei.pt\", \r\n\"funcao\": \"secretárioa\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByaW1laXJvX2FkbWluaXN0cmFkb3IiLCJyb2xlIjoiYWRtaW4ifQ.QLAn8mgm_NcCFwsrxyRF190VhztJouWzmLh-TLzMCno\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -318,7 +318,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"username\": \"maripriv\", \r\n\"password\":\"1234\", \r\n\"nome\": \"mariana\", \r\n\"genero\":\"feminino\", \r\n\"data_nascimento\": \"2003-10-19\", \r\n\"telefone\": 980789664,\r\n\"email\": \"mari@dei.pt\", \r\n\"funcao\": \"aeromoça\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGVuYWF2YWxvciIsInJvbGUiOiJhZG1pbiJ9.SOBvxJbaStVNz9uzC42_xIeNVl0HnqfBoP7iU8aqzic\"}",
+							"raw": "{\"username\": \"maripriv\", \r\n\"password\":\"1234\", \r\n\"nome\": \"mariana\", \r\n\"genero\":\"feminino\", \r\n\"data_nascimento\": \"2003-10-19\", \r\n\"telefone\": 980789664,\r\n\"email\": \"mari@dei.pt\", \r\n\"funcao\": \"aeromoça\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByaW1laXJvX2FkbWluaXN0cmFkb3IiLCJyb2xlIjoiYWRtaW4ifQ.QLAn8mgm_NcCFwsrxyRF190VhztJouWzmLh-TLzMCno\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -351,7 +351,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"username\": \"linde\", \r\n\"password\":\"1234\", \r\n\"nome\": \"miguel\", \r\n\"genero\":\"fluído\", \r\n\"data_nascimento\": \"2003-10-19\", \r\n\"telefone\": 980789664,\r\n\"email\": \"mike@dei.pt\", \r\n\"funcao\": \"secretárioa\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGVuYWF2YWxvciIsInJvbGUiOiJhZG1pbiJ9.SOBvxJbaStVNz9uzC42_xIeNVl0HnqfBoP7iU8aqzic\"}",
+							"raw": "{\"username\": \"linde\", \r\n\"password\":\"1234\", \r\n\"nome\": \"miguel\", \r\n\"genero\":\"fluído\", \r\n\"data_nascimento\": \"2003-10-19\", \r\n\"telefone\": 980789664,\r\n\"email\": \"mike@dei.pt\", \r\n\"funcao\": \"secretárioa\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByaW1laXJvX2FkbWluaXN0cmFkb3IiLCJyb2xlIjoiYWRtaW4ifQ.QLAn8mgm_NcCFwsrxyRF190VhztJouWzmLh-TLzMCno\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -384,7 +384,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\"username\": \"gusta\", \r\n\"password\":\"1234\", \r\n\"nome\": \"gustavo\", \r\n\"genero\":\"fluído\", \r\n\"data_nascimento\": \"2003-10-19\", \r\n\"telefone\": 980789664,\r\n\"email\": \"gusta@dei.pt\", \r\n\"funcao\": \"secretário\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImhlbGVuYWF2YWxvciIsInJvbGUiOiJhZG1pbiJ9.SOBvxJbaStVNz9uzC42_xIeNVl0HnqfBoP7iU8aqzic\"}",
+							"raw": "{\"username\": \"gusta\", \r\n\"password\":\"1234\", \r\n\"nome\": \"gustavo\", \r\n\"genero\":\"fluído\", \r\n\"data_nascimento\": \"2003-10-19\", \r\n\"telefone\": 980789664,\r\n\"email\": \"gusta@dei.pt\", \r\n\"funcao\": \"secretário\", \r\n\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InByaW1laXJvX2FkbWluaXN0cmFkb3IiLCJyb2xlIjoiYWRtaW4ifQ.QLAn8mgm_NcCFwsrxyRF190VhztJouWzmLh-TLzMCno\"}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1319,7 +1319,45 @@
 		},
 		{
 			"name": "top_rotas",
-			"item": []
+			"item": [
+				{
+					"name": "http://127.0.0.1:5000/sgdproj/report/topRoutes/2",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\"token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imxhc3R0ZXN0ZSIsInJvbGUiOiJjbGllbnQifQ.sR3X3Ia7Io7g8-Bu4huvgOAGM6_j3IAxJXa7K654HCg\" }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:5000/sgdproj/report/topRoutes/2",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "5000",
+							"path": [
+								"sgdproj",
+								"report",
+								"topRoutes",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
