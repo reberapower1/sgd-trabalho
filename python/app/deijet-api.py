@@ -905,9 +905,11 @@ def top_rotas(n):
     
         results = []
         for ano, mes, voo_id, num_bilhetes in tabela:
-            mes_data = {"ano": ano, "mês": mes,"TopN": []}
+            mes_data = next((item for item in results if item["ano"] == ano and item["mês"] == mes), None)
+            if mes_data is None:
+                mes_data = {"ano": ano, "mês": mes, "TopN": []}
+                results.append(mes_data)
             mes_data["TopN"].append({"id_voo": voo_id,"total_passageiros": num_bilhetes})
-            results.append(mes_data)
 
         #retornar a resposta com os dados
         result = {
