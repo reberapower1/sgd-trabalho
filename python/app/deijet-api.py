@@ -593,7 +593,7 @@ def checkar_rotas():
         return jsonify(response)
        
     statement = ' SELECT * from check_rotas (%s,%s)'
-    values = (payload['aeroporto_origem'], payload['aeroporto_destino'])
+    values = (payload.get('aeroporto_origem'), payload.get('aeroporto_destino'))
 
     try:
         #Preencher os dados na tabela horário
